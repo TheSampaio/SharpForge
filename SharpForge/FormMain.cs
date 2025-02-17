@@ -4,12 +4,16 @@ namespace SharpForge
 {
     public partial class FormMain : Form
     {
+        private Image? _currentPreview;
+        private CancellationTokenSource? _cancellationToken;
+
         private readonly List<string> _imagePaths = [];
         private readonly string _upscaler = "realesrgan/realesrgan-ncnn-vulkan.exe";
         private readonly object _lock = new();
 
         private readonly int[] _threadAmountList = [1, 2, 3, 4, 5, 6, 7, 8];
         private readonly int[] _tileSizeList = [32, 64, 128, 256, 512, 1024];
+
         private readonly string[] _imageFormatList = ["jpg", "png", "webp"];
         private readonly string[] _aiModelsList = ["esrgan-x4", "realesrgan-x4plus", "realesrgnet-x4plus"];
 
@@ -23,6 +27,9 @@ namespace SharpForge
         {
             // Drag panel
             Pnl_DragImage.AllowDrop = true;
+
+            // Image preview panel
+            Pnl_ImagePreview.BackColor = Color.Transparent;
 
             // AI
             LoadComboBox(Cmb_AI_Model, _aiModelsList, 1);
@@ -48,18 +55,14 @@ namespace SharpForge
             return ext is ".jpg" or ".jpeg" or ".png" or ".bmp" or ".gif" or ".tiff";
         }
 
-#pragma warning disable CS8604
         private static void LoadComboBox<T>(ComboBox comboBox, T[] list, int defaultIndex = 0)
         {
-            if (comboBox != null && list.Length > 0)
-            {
-                for (int i = 0; i < list.Length; i++)
-                    comboBox.Items.Add(list[i]);
+            if (list.Length == 0)
+                return;
 
-                comboBox.SelectedIndex = defaultIndex;
-            }
+            comboBox.Items.AddRange(list.Cast<object>().ToArray());
+            comboBox.SelectedIndex = Math.Clamp(defaultIndex, 0, list.Length - 1);
         }
-#pragma warning restore CS8604
 
         private void Pnl_DragImage_DragDrop(object sender, DragEventArgs e)
         {
@@ -77,6 +80,19 @@ namespace SharpForge
 
                 // Enable "Clear" button
                 Btn_Clear.Enabled = true;
+
+                // Load image preview
+                _currentPreview = Image.FromFile(files[0]);
+                Pnl_ImagePreview.Size = new(_currentPreview.Width, _currentPreview.Height);
+
+                // Center image preview location
+                Pnl_ImagePreview.Location = new(
+                    (Pnl_DragImage.Size.Width / 2) - (Pnl_ImagePreview.Size.Width / 2),
+                    (Pnl_DragImage.Size.Height / 2) - (Pnl_ImagePreview.Size.Height / 2)
+                );
+
+                // Show image preview
+                Pnl_ImagePreview.BackgroundImage = _currentPreview;
             }
         }
 
@@ -98,10 +114,21 @@ namespace SharpForge
 
             // Disable "Clear" button
             Btn_Clear.Enabled = false;
+
+            // Clear image preview
+            Pnl_ImagePreview.BackgroundImage = null;
         }
 
         private void Btn_Upscale_Click(object sender, EventArgs e)
         {
+            if (Btn_Upscale.Text == "Cancel")
+            {
+                // If already upscaling, cancel the operation
+                _cancellationToken?.Cancel();
+                Btn_Upscale.Enabled = false; // Disable button while canceling
+                return;
+            }
+
             if (_imagePaths.Count == 0)
             {
                 MessageBox.Show("No images to upscale.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -113,8 +140,13 @@ namespace SharpForge
             Prg_Process.Maximum = _imagePaths.Count;
             Prg_Process.Value = 0;
 
-            // Disable "Clear" button
             Btn_Clear.Enabled = false;
+
+            // Change button to "Cancel"
+            Btn_Upscale.Text = "Cancel";
+            Btn_Upscale.ForeColor = Color.Red;
+
+            _cancellationToken = new CancellationTokenSource();
 
             Thread upscaleThread = new(() =>
             {
@@ -122,25 +154,31 @@ namespace SharpForge
                     Cmb_CPU_Threads.SelectedItem != null ? Convert.ToInt32(Cmb_CPU_Threads.SelectedItem) : 1
                 ));
 
-                ParallelUpscale(threadCount);
+                ParallelUpscale(threadCount, _cancellationToken.Token);
             })
             {
                 IsBackground = true
             };
 
-
             upscaleThread.Start();
         }
 
-        private void ParallelUpscale(int threadCount)
+
+        private void ParallelUpscale(int threadCount, CancellationToken cancellationToken)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
 
             int processedCount = 0;
 
-            Parallel.ForEach(_imagePaths, new ParallelOptions { MaxDegreeOfParallelism = threadCount }, inputPath =>
+            Parallel.ForEach(_imagePaths, new ParallelOptions { MaxDegreeOfParallelism = threadCount }, (inputPath, state) =>
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    state.Break();
+                    return;
+                }
+
                 string? directory = Path.GetDirectoryName(inputPath) ?? String.Empty;
                 string upscaledDir = Path.Combine(directory, "_Upscaled");
 
@@ -153,12 +191,13 @@ namespace SharpForge
                 {
                     lock (_lock)
                     {
-                        Invoke((MethodInvoker)(() =>
+                        BeginInvoke(() =>
                         {
                             Lbl_Log.Text = "Skipping already upscaled image(s).";
                             Prg_Process.Value = ++processedCount;
-                        }));
+                        });
                     }
+
                     return;
                 }
 
@@ -173,7 +212,6 @@ namespace SharpForge
                         CreateNoWindow = true
                     };
 
-                    // Ensure UI thread access before modifying Arguments
                     Invoke((MethodInvoker)(() =>
                     {
                         psi.Arguments = $"-i \"{inputPath}\" -o \"{outputPath}\" -g 0 -j " +
@@ -185,44 +223,63 @@ namespace SharpForge
                     }));
 
                     using Process process = new() { StartInfo = psi };
+
                     process.Start();
                     process.WaitForExit();
 
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        process.Kill();
+                        state.Break();
+                        return;
+                    }
+
                     lock (_lock)
                     {
-                        Invoke((MethodInvoker)(() =>
+                        Invoke(() =>
                         {
                             if (process.ExitCode == 0)
                                 Lbl_Log.Text = $"Image {Prg_Process.Value + 1}/{Prg_Process.Maximum} upscaled.";
+
                             else
                                 MessageBox.Show($"Upscale failed for {inputPath}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                             Prg_Process.Value = ++processedCount;
-                        }));
+                        });
                     }
                 }
+
                 catch (Exception ex)
                 {
                     lock (_lock)
                     {
-                        Invoke((MethodInvoker)(() =>
+                        BeginInvoke(() =>
                         {
                             MessageBox.Show($"Exception: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }));
+                        });
                     }
                 }
             });
 
             stopwatch.Stop();
-            int elapsedSeconds = (int)stopwatch.Elapsed.TotalSeconds;
 
-            Invoke((MethodInvoker)(() =>
+            BeginInvoke(() =>
             {
-                Lbl_Log.Text = $"Done – Upscaling took {elapsedSeconds} seconds.";
+                if (cancellationToken.IsCancellationRequested)
+                    Lbl_Log.Text = "Upscaling canceled.";
 
-                // Enable "Clear" button
+                else
+                {
+                    int elapsedSeconds = (int)stopwatch.Elapsed.TotalSeconds;
+                    Lbl_Log.Text = $"Done – Upscaling took {elapsedSeconds} seconds.";
+                }
+
+                // Restore button state
+                Btn_Upscale.Text = "Upscale";
+                Btn_Upscale.ForeColor = Color.White;
+                Btn_Upscale.Enabled = true;
                 Btn_Clear.Enabled = true;
-            }));
+            });
         }
     }
 }

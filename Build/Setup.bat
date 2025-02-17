@@ -1,4 +1,4 @@
-@echo off
+ECHO OFF
 TITLE Setup
 CLS
 

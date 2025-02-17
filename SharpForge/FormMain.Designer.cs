@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             Pnl_DragImage = new Panel();
             Prg_Process = new ProgressBar();
+            Pnl_ImagePreview = new Panel();
             panel2 = new Panel();
             label14 = new Label();
             Lbl_Log = new Label();
@@ -80,10 +81,11 @@
             Pnl_DragImage.BackgroundImage = (Image)resources.GetObject("Pnl_DragImage.BackgroundImage");
             Pnl_DragImage.BorderStyle = BorderStyle.FixedSingle;
             Pnl_DragImage.Controls.Add(Prg_Process);
-            Pnl_DragImage.Location = new Point(290, 43);
+            Pnl_DragImage.Controls.Add(Pnl_ImagePreview);
+            Pnl_DragImage.Location = new Point(290, 46);
             Pnl_DragImage.Margin = new Padding(10, 0, 10, 0);
             Pnl_DragImage.Name = "Pnl_DragImage";
-            Pnl_DragImage.Size = new Size(220, 476);
+            Pnl_DragImage.Size = new Size(220, 473);
             Pnl_DragImage.TabIndex = 0;
             Pnl_DragImage.DragDrop += Pnl_DragImage_DragDrop;
             Pnl_DragImage.DragEnter += Pnl_DragImage_DragEnter;
@@ -92,12 +94,20 @@
             // 
             Prg_Process.BackColor = Color.FromArgb(36, 36, 36);
             Prg_Process.Dock = DockStyle.Bottom;
-            Prg_Process.Location = new Point(0, 454);
+            Prg_Process.Location = new Point(0, 451);
             Prg_Process.Margin = new Padding(0);
             Prg_Process.Name = "Prg_Process";
             Prg_Process.Size = new Size(218, 20);
-            Prg_Process.Style = ProgressBarStyle.Continuous;
             Prg_Process.TabIndex = 1;
+            // 
+            // Pnl_ImagePreview
+            // 
+            Pnl_ImagePreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Pnl_ImagePreview.BackgroundImageLayout = ImageLayout.Center;
+            Pnl_ImagePreview.Location = new Point(60, 188);
+            Pnl_ImagePreview.Name = "Pnl_ImagePreview";
+            Pnl_ImagePreview.Size = new Size(100, 97);
+            Pnl_ImagePreview.TabIndex = 2;
             // 
             // panel2
             // 
@@ -116,25 +126,25 @@
             // 
             label14.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Font = new Font("Segoe UI", 12F);
+            label14.Font = new Font("Lato", 12F);
             label14.ForeColor = SystemColors.Control;
-            label14.Location = new Point(729, 5);
+            label14.Location = new Point(728, 6);
             label14.Margin = new Padding(2);
             label14.Name = "label14";
-            label14.Size = new Size(43, 21);
+            label14.Size = new Size(44, 19);
             label14.TabIndex = 0;
-            label14.Text = "0.1.0";
+            label14.Text = "0.3.1";
             // 
             // Lbl_Log
             // 
             Lbl_Log.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Lbl_Log.AutoSize = true;
-            Lbl_Log.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            Lbl_Log.Font = new Font("Lato", 12F, FontStyle.Bold);
             Lbl_Log.ForeColor = SystemColors.Control;
-            Lbl_Log.Location = new Point(12, 5);
+            Lbl_Log.Location = new Point(12, 6);
             Lbl_Log.Margin = new Padding(2);
             Lbl_Log.Name = "Lbl_Log";
-            Lbl_Log.Size = new Size(60, 21);
+            Lbl_Log.Size = new Size(55, 19);
             Lbl_Log.TabIndex = 0;
             Lbl_Log.Text = "Ready.";
             // 
@@ -145,12 +155,12 @@
             Btn_Upscale.Cursor = Cursors.Hand;
             Btn_Upscale.FlatAppearance.BorderSize = 0;
             Btn_Upscale.FlatStyle = FlatStyle.Flat;
-            Btn_Upscale.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            Btn_Upscale.Font = new Font("Lato", 12F, FontStyle.Bold);
             Btn_Upscale.ForeColor = SystemColors.Control;
             Btn_Upscale.Location = new Point(5, 61);
             Btn_Upscale.Name = "Btn_Upscale";
             Btn_Upscale.Size = new Size(237, 50);
-            Btn_Upscale.TabIndex = 2;
+            Btn_Upscale.TabIndex = 0;
             Btn_Upscale.Text = "Upscale";
             Btn_Upscale.UseVisualStyleBackColor = false;
             Btn_Upscale.Click += Btn_Upscale_Click;
@@ -166,7 +176,7 @@
             panel1.Name = "panel1";
             panel1.Padding = new Padding(2);
             panel1.Size = new Size(249, 118);
-            panel1.TabIndex = 3;
+            panel1.TabIndex = 5;
             // 
             // Btn_Clear
             // 
@@ -176,12 +186,12 @@
             Btn_Clear.Enabled = false;
             Btn_Clear.FlatAppearance.BorderSize = 0;
             Btn_Clear.FlatStyle = FlatStyle.Flat;
-            Btn_Clear.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            Btn_Clear.Font = new Font("Lato", 12F, FontStyle.Bold);
             Btn_Clear.ForeColor = SystemColors.Control;
             Btn_Clear.Location = new Point(5, 5);
             Btn_Clear.Name = "Btn_Clear";
             Btn_Clear.Size = new Size(237, 50);
-            Btn_Clear.TabIndex = 2;
+            Btn_Clear.TabIndex = 1;
             Btn_Clear.Text = "Clear";
             Btn_Clear.UseVisualStyleBackColor = false;
             Btn_Clear.Click += Btn_Clear_Click;
@@ -199,7 +209,7 @@
             panel3.Name = "panel3";
             panel3.Padding = new Padding(2);
             panel3.Size = new Size(265, 84);
-            panel3.TabIndex = 4;
+            panel3.TabIndex = 0;
             // 
             // Cmb_AI_Model
             // 
@@ -214,29 +224,29 @@
             Cmb_AI_Model.Location = new Point(85, 38);
             Cmb_AI_Model.Name = "Cmb_AI_Model";
             Cmb_AI_Model.Size = new Size(165, 29);
-            Cmb_AI_Model.TabIndex = 1;
+            Cmb_AI_Model.TabIndex = 0;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
+            label6.Font = new Font("Lato", 12F);
             label6.ForeColor = SystemColors.Control;
-            label6.Location = new Point(10, 41);
+            label6.Location = new Point(10, 43);
             label6.Margin = new Padding(8, 2, 7, 2);
             label6.Name = "label6";
-            label6.Size = new Size(54, 21);
+            label6.Size = new Size(54, 19);
             label6.TabIndex = 0;
             label6.Text = "Model";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label1.Font = new Font("Lato", 14F, FontStyle.Bold);
             label1.ForeColor = SystemColors.Control;
-            label1.Location = new Point(10, 10);
+            label1.Location = new Point(10, 11);
             label1.Margin = new Padding(8);
             label1.Name = "label1";
-            label1.Size = new Size(31, 25);
+            label1.Size = new Size(29, 23);
             label1.TabIndex = 0;
             label1.Text = "AI";
             // 
@@ -253,7 +263,7 @@
             panel4.Name = "panel4";
             panel4.Padding = new Padding(2);
             panel4.Size = new Size(265, 85);
-            panel4.TabIndex = 4;
+            panel4.TabIndex = 1;
             // 
             // Cmb_CPU_Threads
             // 
@@ -268,29 +278,29 @@
             Cmb_CPU_Threads.Location = new Point(85, 38);
             Cmb_CPU_Threads.Name = "Cmb_CPU_Threads";
             Cmb_CPU_Threads.Size = new Size(165, 29);
-            Cmb_CPU_Threads.TabIndex = 1;
+            Cmb_CPU_Threads.TabIndex = 0;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label2.Font = new Font("Lato", 14F, FontStyle.Bold);
             label2.ForeColor = SystemColors.Control;
-            label2.Location = new Point(10, 10);
+            label2.Location = new Point(10, 11);
             label2.Margin = new Padding(8);
             label2.Name = "label2";
-            label2.Size = new Size(50, 25);
+            label2.Size = new Size(49, 23);
             label2.TabIndex = 0;
             label2.Text = "CPU";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 12F);
+            label7.Font = new Font("Lato", 12F);
             label7.ForeColor = SystemColors.Control;
-            label7.Location = new Point(10, 41);
+            label7.Location = new Point(10, 43);
             label7.Margin = new Padding(8, 2, 7, 2);
             label7.Name = "label7";
-            label7.Size = new Size(65, 21);
+            label7.Size = new Size(65, 19);
             label7.TabIndex = 0;
             label7.Text = "Threads";
             // 
@@ -311,7 +321,7 @@
             panel5.Name = "panel5";
             panel5.Padding = new Padding(2);
             panel5.Size = new Size(265, 144);
-            panel5.TabIndex = 4;
+            panel5.TabIndex = 2;
             // 
             // Cmb_GPU_ThreadsWriting
             // 
@@ -327,7 +337,7 @@
             Cmb_GPU_ThreadsWriting.Margin = new Padding(3, 3, 8, 3);
             Cmb_GPU_ThreadsWriting.Name = "Cmb_GPU_ThreadsWriting";
             Cmb_GPU_ThreadsWriting.Size = new Size(104, 29);
-            Cmb_GPU_ThreadsWriting.TabIndex = 1;
+            Cmb_GPU_ThreadsWriting.TabIndex = 2;
             // 
             // Cmb_GPU_ThreadsReading
             // 
@@ -357,53 +367,53 @@
             Cmb_GPU_ThreadsUpload.Location = new Point(146, 37);
             Cmb_GPU_ThreadsUpload.Name = "Cmb_GPU_ThreadsUpload";
             Cmb_GPU_ThreadsUpload.Size = new Size(104, 29);
-            Cmb_GPU_ThreadsUpload.TabIndex = 1;
+            Cmb_GPU_ThreadsUpload.TabIndex = 0;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label3.Font = new Font("Lato", 14F, FontStyle.Bold);
             label3.ForeColor = SystemColors.Control;
-            label3.Location = new Point(10, 10);
+            label3.Location = new Point(10, 11);
             label3.Margin = new Padding(8);
             label3.Name = "label3";
-            label3.Size = new Size(52, 25);
+            label3.Size = new Size(50, 23);
             label3.TabIndex = 0;
             label3.Text = "GPU";
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI", 12F);
+            label10.Font = new Font("Lato", 12F);
             label10.ForeColor = SystemColors.Control;
-            label10.Location = new Point(10, 102);
+            label10.Location = new Point(10, 104);
             label10.Margin = new Padding(8, 8, 7, 2);
             label10.Name = "label10";
-            label10.Size = new Size(121, 21);
+            label10.Size = new Size(122, 19);
             label10.TabIndex = 0;
             label10.Text = "Writing Threads";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Font = new Font("Segoe UI", 12F);
+            label9.Font = new Font("Lato", 12F);
             label9.ForeColor = SystemColors.Control;
-            label9.Location = new Point(10, 71);
+            label9.Location = new Point(10, 73);
             label9.Margin = new Padding(8, 8, 7, 2);
             label9.Name = "label9";
-            label9.Size = new Size(126, 21);
+            label9.Size = new Size(124, 19);
             label9.TabIndex = 0;
             label9.Text = "Reading Threads";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 12F);
+            label8.Font = new Font("Lato", 12F);
             label8.ForeColor = SystemColors.Control;
-            label8.Location = new Point(10, 40);
+            label8.Location = new Point(10, 42);
             label8.Margin = new Padding(8, 2, 7, 2);
             label8.Name = "label8";
-            label8.Size = new Size(119, 21);
+            label8.Size = new Size(120, 19);
             label8.TabIndex = 0;
             label8.Text = "Upload Threads";
             // 
@@ -435,7 +445,7 @@
             Chk_UseSuffix.Margin = new Padding(3, 9, 3, 3);
             Chk_UseSuffix.Name = "Chk_UseSuffix";
             Chk_UseSuffix.Size = new Size(15, 14);
-            Chk_UseSuffix.TabIndex = 2;
+            Chk_UseSuffix.TabIndex = 1;
             Chk_UseSuffix.UseVisualStyleBackColor = false;
             // 
             // Cmb_FileExtension
@@ -451,41 +461,41 @@
             Cmb_FileExtension.Location = new Point(96, 38);
             Cmb_FileExtension.Name = "Cmb_FileExtension";
             Cmb_FileExtension.Size = new Size(139, 29);
-            Cmb_FileExtension.TabIndex = 1;
+            Cmb_FileExtension.TabIndex = 0;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label5.Font = new Font("Lato", 14F, FontStyle.Bold);
             label5.ForeColor = SystemColors.Control;
-            label5.Location = new Point(10, 10);
+            label5.Location = new Point(10, 11);
             label5.Margin = new Padding(8);
             label5.Name = "label5";
-            label5.Size = new Size(76, 25);
+            label5.Size = new Size(71, 23);
             label5.TabIndex = 0;
             label5.Text = "Format";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Font = new Font("Segoe UI", 12F);
+            label13.Font = new Font("Lato", 12F);
             label13.ForeColor = SystemColors.Control;
-            label13.Location = new Point(10, 74);
+            label13.Location = new Point(10, 76);
             label13.Margin = new Padding(8, 2, 7, 2);
             label13.Name = "label13";
-            label13.Size = new Size(79, 21);
+            label13.Size = new Size(80, 19);
             label13.TabIndex = 0;
             label13.Text = "Use Suffix";
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI", 12F);
+            label12.Font = new Font("Lato", 12F);
             label12.ForeColor = SystemColors.Control;
-            label12.Location = new Point(10, 41);
+            label12.Location = new Point(10, 43);
             label12.Margin = new Padding(8, 8, 7, 2);
             label12.Name = "label12";
-            label12.Size = new Size(76, 21);
+            label12.Size = new Size(78, 19);
             label12.TabIndex = 0;
             label12.Text = "Extension";
             // 
@@ -502,7 +512,7 @@
             panel7.Name = "panel7";
             panel7.Padding = new Padding(2);
             panel7.Size = new Size(249, 84);
-            panel7.TabIndex = 4;
+            panel7.TabIndex = 3;
             // 
             // Cmb_TileSize
             // 
@@ -517,29 +527,29 @@
             Cmb_TileSize.Location = new Point(96, 38);
             Cmb_TileSize.Name = "Cmb_TileSize";
             Cmb_TileSize.Size = new Size(139, 29);
-            Cmb_TileSize.TabIndex = 1;
+            Cmb_TileSize.TabIndex = 0;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label4.Font = new Font("Lato", 14F, FontStyle.Bold);
             label4.ForeColor = SystemColors.Control;
-            label4.Location = new Point(10, 10);
+            label4.Location = new Point(10, 11);
             label4.Margin = new Padding(8);
             label4.Name = "label4";
-            label4.Size = new Size(62, 25);
+            label4.Size = new Size(57, 23);
             label4.TabIndex = 0;
             label4.Text = "Tiling";
             // 
             // label11
             // 
             label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 12F);
+            label11.Font = new Font("Lato", 12F);
             label11.ForeColor = SystemColors.Control;
-            label11.Location = new Point(10, 41);
+            label11.Location = new Point(10, 43);
             label11.Margin = new Padding(8, 2, 7, 2);
             label11.Name = "label11";
-            label11.Size = new Size(38, 21);
+            label11.Size = new Size(37, 19);
             label11.TabIndex = 0;
             label11.Text = "Size";
             // 
@@ -550,7 +560,7 @@
             panel8.BorderStyle = BorderStyle.FixedSingle;
             panel8.Location = new Point(-1, 0);
             panel8.Name = "panel8";
-            panel8.Size = new Size(785, 30);
+            panel8.Size = new Size(785, 33);
             panel8.TabIndex = 5;
             // 
             // FormMain
@@ -626,5 +636,6 @@
         private Label label13;
         private Label label14;
         private Panel panel8;
+        private Panel Pnl_ImagePreview;
     }
 }
