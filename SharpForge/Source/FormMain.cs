@@ -1,3 +1,4 @@
+using SharpForge.Source;
 using System.Diagnostics;
 
 namespace SharpForge
@@ -9,6 +10,8 @@ namespace SharpForge
 
         private readonly List<string> _imagePaths = [];
         private readonly string _upscaler = "realesrgan/realesrgan-ncnn-vulkan.exe";
+        private readonly string _models = "realesrgan/models";
+        private readonly string _appVersion = "1.1.0";
         private readonly object _lock = new();
 
         private readonly int[] _threadAmountList = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -25,14 +28,17 @@ namespace SharpForge
 
         private void SetupComponent()
         {
+            // Vesion label
+            Lbl_ApplicationVersion.Text = _appVersion;
+
             // Drag panel
             Pnl_DragImage.AllowDrop = true;
 
             // Image preview panel
             Pnl_ImagePreview.BackColor = Color.Transparent;
 
-            // AI
-            LoadComboBox(Cmb_AI_Model, _aiModelsList, 1);
+            // AI models (load from folder)
+            LoadModelsList(Cmb_AI_Model, _aiModelsList, 1);
 
             // CPU
             LoadComboBox(Cmb_CPU_Threads, _threadAmountList, 3);
@@ -62,6 +68,27 @@ namespace SharpForge
 
             comboBox.Items.AddRange(list.Cast<object>().ToArray());
             comboBox.SelectedIndex = Math.Clamp(defaultIndex, 0, list.Length - 1);
+        }
+
+        private void LoadModelsList<T>(ComboBox comboBox, T[] list, int defaultIndex = 0)
+        {
+            if (!Directory.Exists(_models))
+            {
+                MessageBox.Show($"Models directory not found: {_models}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Get all .bin files in the models folder
+            string[] modelFiles = Directory.GetFiles(_models, "*.bin");
+
+            // Extract file names without extension
+            string[] aiModels = modelFiles.Select(file => Path.GetFileNameWithoutExtension(file)).ToArray();
+
+            // Combine hardcoded list with dynamic list and remove duplicates
+            HashSet<string> uniqueModels = new(list.Cast<string>().Concat(aiModels));
+
+            // Load into combo box
+            LoadComboBox(comboBox, uniqueModels.ToArray(), defaultIndex);
         }
 
         private void Pnl_DragImage_DragDrop(object sender, DragEventArgs e)
@@ -125,7 +152,7 @@ namespace SharpForge
             {
                 // If already upscaling, cancel the operation
                 _cancellationToken?.Cancel();
-                Btn_Upscale.Enabled = false; // Disable button while canceling
+                Btn_Upscale.Enabled = false;
                 return;
             }
 
@@ -179,13 +206,32 @@ namespace SharpForge
                     return;
                 }
 
-                string? directory = Path.GetDirectoryName(inputPath) ?? String.Empty;
-                string upscaledDir = Path.Combine(directory, "_Upscaled");
+                // Retrieve the selected AI model from the UI thread before starting the parallel task
+                string selectedAIModel = (string)Invoke(new Func<string>(() =>
+                    Cmb_AI_Model.SelectedItem?.ToString() ?? "realesrgan-x4plus"
+                ));
 
-                Directory.CreateDirectory(upscaledDir);
+                string? directory = Path.GetDirectoryName(inputPath) ?? String.Empty;
+                string upscaledDir = Path.Combine(directory, $"_Upscaled ({selectedAIModel})");
+
+                // Create "_Upscaled" directory
+                if (!Chk_UseSuffix.Checked)
+                    Directory.CreateDirectory(upscaledDir);
 
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(inputPath);
-                string outputPath = Path.Combine(upscaledDir, $"{fileNameWithoutExt}.png");
+
+                // Fetch the extension synchronously
+                string? extension = (string?)Invoke(new Func<string?>(() =>
+                    Cmb_FileExtension.SelectedItem?.ToString()));
+
+                // Default extension in case of null/empty
+                if (string.IsNullOrWhiteSpace(extension))
+                    extension = "png";
+
+                // Check if using suffix
+                string outputPath = !Chk_UseSuffix.Checked ?
+                    Path.Combine(upscaledDir, $"{fileNameWithoutExt}.{extension}") :
+                    Path.Combine(directory, $"{fileNameWithoutExt} ({selectedAIModel}).{extension}");
 
                 if (File.Exists(outputPath))
                 {
@@ -219,7 +265,8 @@ namespace SharpForge
                                         $"{Cmb_GPU_ThreadsReading.SelectedItem?.ToString()}:" +
                                         $"{Cmb_GPU_ThreadsWriting.SelectedItem?.ToString()} " +
                                         $"-t {Cmb_TileSize.SelectedItem?.ToString()}" +
-                                        $"-n {Cmb_AI_Model.SelectedItem?.ToString()}";
+                                        $"-n {Cmb_AI_Model.SelectedItem?.ToString()}" +
+                                        $"-f {Cmb_FileExtension.SelectedItem?.ToString()}";
                     }));
 
                     using Process process = new() { StartInfo = psi };
@@ -270,8 +317,8 @@ namespace SharpForge
 
                 else
                 {
-                    int elapsedSeconds = (int)stopwatch.Elapsed.TotalSeconds;
-                    Lbl_Log.Text = $"Done – Upscaling took {elapsedSeconds} seconds.";
+                    float elapsedSeconds = (float)stopwatch.Elapsed.TotalSeconds;
+                    Lbl_Log.Text = $"Done – Upscaling took {elapsedSeconds:f1} seconds.";
                 }
 
                 // Restore button state
@@ -280,6 +327,12 @@ namespace SharpForge
                 Btn_Upscale.Enabled = true;
                 Btn_Clear.Enabled = true;
             });
+        }
+
+        private void Btn_DonatePayPal_Click(object sender, EventArgs e)
+        {
+            FormDonate formDonate = new();
+            formDonate.ShowDialog();
         }
     }
 }

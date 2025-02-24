@@ -31,8 +31,6 @@ Sharp Forge includes icons from the following sources:
 - [United States icons](https://www.flaticon.com/free-icons/united-states) created by **Freepik** - Flaticon
 - [Flags icons](https://www.flaticon.com/free-icons/flags) created by **Marcus Christensen** - Flaticon
 
-Additionally, Sharp Forge is inspired by **Cupscale**, another upscaling tool with a similar purpose. You can check out [Cupscale here](https://github.com/n00mkrad/cupscale).
-
 ## License
 
 Sharp Forge is **free to use**, but it is **closed-source** and remains the property of its creator. Donations are welcome to support development.
