@@ -1,42 +1,46 @@
 # Sharp Forge
 
-Sharp Forge is a powerful image upscaling and enhancement tool utilizing **RealErsgan** to deliver high-quality results. Designed for ease of use and efficiency, Sharp Forge helps improve image clarity, resolution, and details with advanced AI-based processing.
+Sharp Forge is a powerful image upscaling and enhancement tool utilizing **Real-ESRGAN** to deliver high-quality results. Designed for ease of use and efficiency, it enhances image clarity, resolution, and details through advanced AI-powered processing.
+
+![Thumbnail](SharpForge/Resources/Thumbnails/showcase-sharp-forge-01.png)
 
 ## Features
 
-- AI-powered image upscaling using **RealErsgan**.
-- User-friendly interface for seamless workflow.
-- Supports multiple input and output formats.
-- Optimized for high-performance processing.
+- **AI-powered upscaling** with **Real-ESRGAN**.
+- **User-friendly interface** for a seamless workflow.
+- **Support for multiple formats** (input and output).
+- **Optimized performance** for fast and efficient processing.
 
-## Installation & Usage
+## Installation
 
-1. Download and extract the latest version of Sharp Forge.
-2. Run the executable file to launch the program.
-3. Load your image and select the desired upscaling settings.
+1. **Download** and extract the latest version of Sharp Forge.
+2. **Run** the executable file to launch the program.
+3. **Load** your image and select the desired upscaling settings.
 4. Click **Process** to enhance your image.
-5. Save your upscaled image in the preferred format.
+5. **Save** your upscaled image in your preferred format.
 
 ## Dependencies
 
-Sharp Forge relies on the following libraries and technologies:
+Sharp Forge relies on the following technologies:
 
-- **RealErsgan** for AI upscaling ([GitHub Repository](https://github.com/xinntao/Real-ESRGAN)).
+- **Real-ESRGAN** for AI-based upscaling ([GitHub Repository](https://github.com/xinntao/Real-ESRGAN)).
 
 ## Acknowledgments
 
-Sharp Forge includes icons from the following sources:
+Sharp Forge includes icons from:
 
-- [Brazil icons](https://www.flaticon.com/free-icons/brazil) created by **Hight Quality Icons** - Flaticon
-- [United States icons](https://www.flaticon.com/free-icons/united-states) created by **Freepik** - Flaticon
-- [Flags icons](https://www.flaticon.com/free-icons/flags) created by **Marcus Christensen** - Flaticon
+- [Brazil icons](https://www.flaticon.com/free-icons/brazil) by **High Quality Icons** - Flaticon
+- [United States icons](https://www.flaticon.com/free-icons/united-states) by **Freepik** - Flaticon
+- [Flags icons](https://www.flaticon.com/free-icons/flags) by **Marcus Christensen** - Flaticon
 
-Additionally, Sharp Forge is inspired by **Cupscale**, another upscaling tool with a similar purpose. You can check out [Cupscale here](https://github.com/n00mkrad/cupscale).
+Additionally, Sharp Forge is inspired by **Cupscale**, a similar upscaling tool. Check out [Cupscale here](https://github.com/n00mkrad/cupscale).
 
 ## License
 
-Sharp Forge is **free to use**, but it is **closed-source** and remains the property of its creator. Donations are welcome to support development.
+Sharp Forge is **free to use** but remains **closed-source** and the property of its creator. Donations are welcome to support its development.
 
-This software is provided **as is**, meaning there are no guarantees regarding its performance, security, or reliability. The creator is not responsible for any issues, damages, or losses resulting from its use.
+This software is provided **as is**, with no guarantees regarding performance, security, or reliability. The creator is not responsible for any issues, damages, or losses resulting from its use.
 
-Additionally, users must ensure they have the legal rights to process and use any images commercially. Sharp Forge does not grant permission for copyrighted images; it only enhances them. Users are responsible for complying with copyright and licensing laws.
+## Disclaimer
+
+Users must ensure they have the legal rights to process and use images commercially. Sharp Forge does not grant permission for copyrighted images; it only enhances them. Users are responsible for complying with all copyright and licensing laws.
