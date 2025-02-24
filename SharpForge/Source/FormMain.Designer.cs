@@ -33,7 +33,7 @@
             Prg_Process = new ProgressBar();
             Pnl_ImagePreview = new Panel();
             panel2 = new Panel();
-            label14 = new Label();
+            Lbl_ApplicationVersion = new Label();
             Lbl_Log = new Label();
             Btn_Upscale = new Button();
             panel1 = new Panel();
@@ -65,6 +65,8 @@
             label4 = new Label();
             label11 = new Label();
             panel8 = new Panel();
+            Btn_Donate = new Button();
+            panel9 = new Panel();
             Pnl_DragImage.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
@@ -73,19 +75,21 @@
             panel5.SuspendLayout();
             panel6.SuspendLayout();
             panel7.SuspendLayout();
+            panel9.SuspendLayout();
             SuspendLayout();
             // 
             // Pnl_DragImage
             // 
             Pnl_DragImage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Pnl_DragImage.AutoScroll = true;
             Pnl_DragImage.BackgroundImage = (Image)resources.GetObject("Pnl_DragImage.BackgroundImage");
             Pnl_DragImage.BorderStyle = BorderStyle.FixedSingle;
             Pnl_DragImage.Controls.Add(Prg_Process);
             Pnl_DragImage.Controls.Add(Pnl_ImagePreview);
-            Pnl_DragImage.Location = new Point(290, 46);
+            Pnl_DragImage.Location = new Point(340, 45);
             Pnl_DragImage.Margin = new Padding(10, 0, 10, 0);
             Pnl_DragImage.Name = "Pnl_DragImage";
-            Pnl_DragImage.Size = new Size(220, 473);
+            Pnl_DragImage.Size = new Size(120, 474);
             Pnl_DragImage.TabIndex = 0;
             Pnl_DragImage.DragDrop += Pnl_DragImage_DragDrop;
             Pnl_DragImage.DragEnter += Pnl_DragImage_DragEnter;
@@ -94,19 +98,20 @@
             // 
             Prg_Process.BackColor = Color.FromArgb(36, 36, 36);
             Prg_Process.Dock = DockStyle.Bottom;
-            Prg_Process.Location = new Point(0, 451);
+            Prg_Process.Location = new Point(0, 452);
             Prg_Process.Margin = new Padding(0);
             Prg_Process.Name = "Prg_Process";
-            Prg_Process.Size = new Size(218, 20);
+            Prg_Process.Size = new Size(118, 20);
             Prg_Process.TabIndex = 1;
             // 
             // Pnl_ImagePreview
             // 
             Pnl_ImagePreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Pnl_ImagePreview.BackColor = Color.Transparent;
             Pnl_ImagePreview.BackgroundImageLayout = ImageLayout.Center;
             Pnl_ImagePreview.Location = new Point(60, 188);
             Pnl_ImagePreview.Name = "Pnl_ImagePreview";
-            Pnl_ImagePreview.Size = new Size(100, 97);
+            Pnl_ImagePreview.Size = new Size(0, 98);
             Pnl_ImagePreview.TabIndex = 2;
             // 
             // panel2
@@ -114,7 +119,7 @@
             panel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel2.BackColor = Color.FromArgb(36, 36, 36);
             panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(label14);
+            panel2.Controls.Add(Lbl_ApplicationVersion);
             panel2.Controls.Add(Lbl_Log);
             panel2.Location = new Point(-1, 529);
             panel2.Margin = new Padding(0);
@@ -122,18 +127,18 @@
             panel2.Size = new Size(786, 33);
             panel2.TabIndex = 1;
             // 
-            // label14
+            // Lbl_ApplicationVersion
             // 
-            label14.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            label14.AutoSize = true;
-            label14.Font = new Font("Lato", 12F);
-            label14.ForeColor = SystemColors.Control;
-            label14.Location = new Point(728, 6);
-            label14.Margin = new Padding(2);
-            label14.Name = "label14";
-            label14.Size = new Size(44, 19);
-            label14.TabIndex = 0;
-            label14.Text = "0.3.1";
+            Lbl_ApplicationVersion.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            Lbl_ApplicationVersion.AutoSize = true;
+            Lbl_ApplicationVersion.Font = new Font("Lato", 12F);
+            Lbl_ApplicationVersion.ForeColor = SystemColors.Control;
+            Lbl_ApplicationVersion.Location = new Point(728, 6);
+            Lbl_ApplicationVersion.Margin = new Padding(2);
+            Lbl_ApplicationVersion.Name = "Lbl_ApplicationVersion";
+            Lbl_ApplicationVersion.Size = new Size(44, 19);
+            Lbl_ApplicationVersion.TabIndex = 0;
+            Lbl_ApplicationVersion.Text = "0.0.0";
             // 
             // Lbl_Log
             // 
@@ -159,7 +164,7 @@
             Btn_Upscale.ForeColor = SystemColors.Control;
             Btn_Upscale.Location = new Point(5, 61);
             Btn_Upscale.Name = "Btn_Upscale";
-            Btn_Upscale.Size = new Size(237, 50);
+            Btn_Upscale.Size = new Size(287, 50);
             Btn_Upscale.TabIndex = 0;
             Btn_Upscale.Text = "Upscale";
             Btn_Upscale.UseVisualStyleBackColor = false;
@@ -172,10 +177,10 @@
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(Btn_Clear);
             panel1.Controls.Add(Btn_Upscale);
-            panel1.Location = new Point(523, 401);
+            panel1.Location = new Point(473, 401);
             panel1.Name = "panel1";
             panel1.Padding = new Padding(2);
-            panel1.Size = new Size(249, 118);
+            panel1.Size = new Size(299, 118);
             panel1.TabIndex = 5;
             // 
             // Btn_Clear
@@ -190,7 +195,7 @@
             Btn_Clear.ForeColor = SystemColors.Control;
             Btn_Clear.Location = new Point(5, 5);
             Btn_Clear.Name = "Btn_Clear";
-            Btn_Clear.Size = new Size(237, 50);
+            Btn_Clear.Size = new Size(287, 50);
             Btn_Clear.TabIndex = 1;
             Btn_Clear.Text = "Clear";
             Btn_Clear.UseVisualStyleBackColor = false;
@@ -208,7 +213,7 @@
             panel3.Margin = new Padding(3, 5, 3, 5);
             panel3.Name = "panel3";
             panel3.Padding = new Padding(2);
-            panel3.Size = new Size(265, 84);
+            panel3.Size = new Size(315, 84);
             panel3.TabIndex = 0;
             // 
             // Cmb_AI_Model
@@ -223,7 +228,7 @@
             Cmb_AI_Model.IntegralHeight = false;
             Cmb_AI_Model.Location = new Point(85, 38);
             Cmb_AI_Model.Name = "Cmb_AI_Model";
-            Cmb_AI_Model.Size = new Size(165, 29);
+            Cmb_AI_Model.Size = new Size(215, 29);
             Cmb_AI_Model.TabIndex = 0;
             // 
             // label6
@@ -262,7 +267,7 @@
             panel4.Margin = new Padding(3, 5, 3, 5);
             panel4.Name = "panel4";
             panel4.Padding = new Padding(2);
-            panel4.Size = new Size(265, 85);
+            panel4.Size = new Size(315, 85);
             panel4.TabIndex = 1;
             // 
             // Cmb_CPU_Threads
@@ -277,7 +282,7 @@
             Cmb_CPU_Threads.IntegralHeight = false;
             Cmb_CPU_Threads.Location = new Point(85, 38);
             Cmb_CPU_Threads.Name = "Cmb_CPU_Threads";
-            Cmb_CPU_Threads.Size = new Size(165, 29);
+            Cmb_CPU_Threads.Size = new Size(215, 29);
             Cmb_CPU_Threads.TabIndex = 0;
             // 
             // label2
@@ -320,7 +325,7 @@
             panel5.Margin = new Padding(3, 5, 3, 5);
             panel5.Name = "panel5";
             panel5.Padding = new Padding(2);
-            panel5.Size = new Size(265, 144);
+            panel5.Size = new Size(315, 144);
             panel5.TabIndex = 2;
             // 
             // Cmb_GPU_ThreadsWriting
@@ -336,7 +341,7 @@
             Cmb_GPU_ThreadsWriting.Location = new Point(146, 99);
             Cmb_GPU_ThreadsWriting.Margin = new Padding(3, 3, 8, 3);
             Cmb_GPU_ThreadsWriting.Name = "Cmb_GPU_ThreadsWriting";
-            Cmb_GPU_ThreadsWriting.Size = new Size(104, 29);
+            Cmb_GPU_ThreadsWriting.Size = new Size(154, 29);
             Cmb_GPU_ThreadsWriting.TabIndex = 2;
             // 
             // Cmb_GPU_ThreadsReading
@@ -351,7 +356,7 @@
             Cmb_GPU_ThreadsReading.IntegralHeight = false;
             Cmb_GPU_ThreadsReading.Location = new Point(146, 68);
             Cmb_GPU_ThreadsReading.Name = "Cmb_GPU_ThreadsReading";
-            Cmb_GPU_ThreadsReading.Size = new Size(104, 29);
+            Cmb_GPU_ThreadsReading.Size = new Size(154, 29);
             Cmb_GPU_ThreadsReading.TabIndex = 1;
             // 
             // Cmb_GPU_ThreadsUpload
@@ -366,7 +371,7 @@
             Cmb_GPU_ThreadsUpload.IntegralHeight = false;
             Cmb_GPU_ThreadsUpload.Location = new Point(146, 37);
             Cmb_GPU_ThreadsUpload.Name = "Cmb_GPU_ThreadsUpload";
-            Cmb_GPU_ThreadsUpload.Size = new Size(104, 29);
+            Cmb_GPU_ThreadsUpload.Size = new Size(154, 29);
             Cmb_GPU_ThreadsUpload.TabIndex = 0;
             // 
             // label3
@@ -427,11 +432,11 @@
             panel6.Controls.Add(label5);
             panel6.Controls.Add(label13);
             panel6.Controls.Add(label12);
-            panel6.Location = new Point(523, 279);
+            panel6.Location = new Point(473, 279);
             panel6.Margin = new Padding(3, 5, 3, 5);
             panel6.Name = "panel6";
             panel6.Padding = new Padding(2);
-            panel6.Size = new Size(249, 113);
+            panel6.Size = new Size(299, 113);
             panel6.TabIndex = 4;
             // 
             // Chk_UseSuffix
@@ -507,11 +512,11 @@
             panel7.Controls.Add(Cmb_TileSize);
             panel7.Controls.Add(label4);
             panel7.Controls.Add(label11);
-            panel7.Location = new Point(523, 185);
+            panel7.Location = new Point(473, 185);
             panel7.Margin = new Padding(3, 5, 3, 5);
             panel7.Name = "panel7";
             panel7.Padding = new Padding(2);
-            panel7.Size = new Size(249, 84);
+            panel7.Size = new Size(299, 84);
             panel7.TabIndex = 3;
             // 
             // Cmb_TileSize
@@ -560,8 +565,37 @@
             panel8.BorderStyle = BorderStyle.FixedSingle;
             panel8.Location = new Point(-1, 0);
             panel8.Name = "panel8";
-            panel8.Size = new Size(785, 33);
-            panel8.TabIndex = 5;
+            panel8.Size = new Size(786, 33);
+            panel8.TabIndex = 7;
+            // 
+            // Btn_Donate
+            // 
+            Btn_Donate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Btn_Donate.BackgroundImage = (Image)resources.GetObject("Btn_Donate.BackgroundImage");
+            Btn_Donate.BackgroundImageLayout = ImageLayout.Stretch;
+            Btn_Donate.Cursor = Cursors.Hand;
+            Btn_Donate.FlatAppearance.BorderSize = 0;
+            Btn_Donate.FlatStyle = FlatStyle.Flat;
+            Btn_Donate.ForeColor = SystemColors.Control;
+            Btn_Donate.Location = new Point(-1, -1);
+            Btn_Donate.Margin = new Padding(0);
+            Btn_Donate.Name = "Btn_Donate";
+            Btn_Donate.Size = new Size(299, 80);
+            Btn_Donate.TabIndex = 8;
+            Btn_Donate.UseVisualStyleBackColor = true;
+            Btn_Donate.Click += Btn_DonatePayPal_Click;
+            // 
+            // panel9
+            // 
+            panel9.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            panel9.BackColor = Color.FromArgb(36, 36, 36);
+            panel9.BorderStyle = BorderStyle.FixedSingle;
+            panel9.Controls.Add(Btn_Donate);
+            panel9.Location = new Point(473, 95);
+            panel9.Margin = new Padding(3, 5, 3, 5);
+            panel9.Name = "panel9";
+            panel9.Size = new Size(299, 80);
+            panel9.TabIndex = 3;
             // 
             // FormMain
             // 
@@ -569,15 +603,16 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(32, 32, 32);
             ClientSize = new Size(784, 561);
-            Controls.Add(panel8);
             Controls.Add(panel5);
             Controls.Add(panel4);
+            Controls.Add(panel9);
             Controls.Add(panel7);
             Controls.Add(panel6);
             Controls.Add(panel3);
             Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(Pnl_DragImage);
+            Controls.Add(panel8);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormMain";
             Text = "Sharp Forge";
@@ -596,6 +631,7 @@
             panel6.PerformLayout();
             panel7.ResumeLayout(false);
             panel7.PerformLayout();
+            panel9.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -634,8 +670,10 @@
         private Label label11;
         private CheckBox Chk_UseSuffix;
         private Label label13;
-        private Label label14;
-        private Panel panel8;
+        private Label Lbl_ApplicationVersion;
         private Panel Pnl_ImagePreview;
+        private Panel panel8;
+        private Button Btn_Donate;
+        private Panel panel9;
     }
 }
