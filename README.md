@@ -2,7 +2,7 @@
 
 Sharp Forge is a powerful image upscaling and enhancement tool utilizing **Real-ESRGAN** to deliver high-quality results. Designed for ease of use and efficiency, it enhances image clarity, resolution, and details through advanced AI-powered processing.
 
-![Thumbnail](SharpForge/Resources/Thumbnails/showcase-sharp-forge-01.png)
+![Thumbnail](SharpForge/Resources/Thumbnails/showcase-sharp-forge-01.jpg)
 
 ## Features
 
