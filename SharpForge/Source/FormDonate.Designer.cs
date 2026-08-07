@@ -1,4 +1,4 @@
-﻿namespace SharpForge.Source
+namespace SharpForge.Source
 {
     partial class FormDonate
     {
@@ -76,7 +76,8 @@
             Btn_MoneyDollar.Margin = new Padding(5, 3, 5, 3);
             Btn_MoneyDollar.Name = "Btn_MoneyDollar";
             Btn_MoneyDollar.Size = new Size(50, 50);
-            Btn_MoneyDollar.TabIndex = 10;
+            Btn_MoneyDollar.TabIndex = 1;
+            Btn_MoneyDollar.AccessibleName = "Donate in US Dollars";
             Btn_MoneyDollar.UseVisualStyleBackColor = false;
             Btn_MoneyDollar.Click += Btn_MoneyDollar_Click;
             // 
@@ -133,7 +134,8 @@
             Btn_MoneyReal.Margin = new Padding(5, 3, 5, 3);
             Btn_MoneyReal.Name = "Btn_MoneyReal";
             Btn_MoneyReal.Size = new Size(50, 50);
-            Btn_MoneyReal.TabIndex = 10;
+            Btn_MoneyReal.TabIndex = 2;
+            Btn_MoneyReal.AccessibleName = "Donate in Brazilian Reais";
             Btn_MoneyReal.UseVisualStyleBackColor = false;
             Btn_MoneyReal.Click += Btn_MoneyReal_Click;
             // 
@@ -151,7 +153,8 @@
             Btn_MoneyEuro.Margin = new Padding(5, 3, 5, 3);
             Btn_MoneyEuro.Name = "Btn_MoneyEuro";
             Btn_MoneyEuro.Size = new Size(50, 50);
-            Btn_MoneyEuro.TabIndex = 10;
+            Btn_MoneyEuro.TabIndex = 0;
+            Btn_MoneyEuro.AccessibleName = "Donate in Euros";
             Btn_MoneyEuro.UseVisualStyleBackColor = false;
             Btn_MoneyEuro.Click += Btn_MoneyEuro_Click;
             // 
@@ -170,9 +173,9 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FormDonate";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Donate";
-            KeyPress += FormDonate_KeyPress;
+            KeyDown += FormDonate_KeyDown;
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ResumeLayout(false);

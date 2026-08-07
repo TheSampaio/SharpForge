@@ -1,679 +1,689 @@
-﻿namespace SharpForge
+#nullable enable
+
+using SharpForge.Controls;
+
+namespace SharpForge;
+
+partial class FormMain
 {
-    partial class FormMain
+    private System.ComponentModel.IContainer? components;
+
+    /// <summary>
+    /// Releases resources owned by the form.
+    /// </summary>
+    /// <param name="disposing">Whether managed resources should be released.</param>
+    protected override void Dispose(bool disposing)
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        if (disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
+            components?.Dispose();
+            _currentPreview?.Dispose();
+            _cancellationTokenSource?.Dispose();
+            DisposeQueueThumbnails();
+            DisposeUiIcons();
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            Pnl_DragImage = new Panel();
-            Prg_Process = new ProgressBar();
-            Pnl_ImagePreview = new Panel();
-            panel2 = new Panel();
-            Lbl_ApplicationVersion = new Label();
-            Lbl_Log = new Label();
-            Btn_Upscale = new Button();
-            panel1 = new Panel();
-            Btn_Clear = new Button();
-            panel3 = new Panel();
-            Cmb_AI_Model = new ComboBox();
-            label6 = new Label();
-            label1 = new Label();
-            panel4 = new Panel();
-            Cmb_CPU_Threads = new ComboBox();
-            label2 = new Label();
-            label7 = new Label();
-            panel5 = new Panel();
-            Cmb_GPU_ThreadsWriting = new ComboBox();
-            Cmb_GPU_ThreadsReading = new ComboBox();
-            Cmb_GPU_ThreadsUpload = new ComboBox();
-            label3 = new Label();
-            label10 = new Label();
-            label9 = new Label();
-            label8 = new Label();
-            panel6 = new Panel();
-            Chk_UseSuffix = new CheckBox();
-            Cmb_FileExtension = new ComboBox();
-            label5 = new Label();
-            label13 = new Label();
-            label12 = new Label();
-            panel7 = new Panel();
-            Cmb_TileSize = new ComboBox();
-            label4 = new Label();
-            label11 = new Label();
-            panel8 = new Panel();
-            Btn_Donate = new Button();
-            panel9 = new Panel();
-            Pnl_DragImage.SuspendLayout();
-            panel2.SuspendLayout();
-            panel1.SuspendLayout();
-            panel3.SuspendLayout();
-            panel4.SuspendLayout();
-            panel5.SuspendLayout();
-            panel6.SuspendLayout();
-            panel7.SuspendLayout();
-            panel9.SuspendLayout();
-            SuspendLayout();
-            // 
-            // Pnl_DragImage
-            // 
-            Pnl_DragImage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Pnl_DragImage.AutoScroll = true;
-            Pnl_DragImage.BackgroundImage = (Image)resources.GetObject("Pnl_DragImage.BackgroundImage");
-            Pnl_DragImage.BorderStyle = BorderStyle.FixedSingle;
-            Pnl_DragImage.Controls.Add(Prg_Process);
-            Pnl_DragImage.Controls.Add(Pnl_ImagePreview);
-            Pnl_DragImage.Location = new Point(340, 45);
-            Pnl_DragImage.Margin = new Padding(10, 0, 10, 0);
-            Pnl_DragImage.Name = "Pnl_DragImage";
-            Pnl_DragImage.Size = new Size(120, 474);
-            Pnl_DragImage.TabIndex = 0;
-            Pnl_DragImage.DragDrop += Pnl_DragImage_DragDrop;
-            Pnl_DragImage.DragEnter += Pnl_DragImage_DragEnter;
-            // 
-            // Prg_Process
-            // 
-            Prg_Process.BackColor = Color.FromArgb(36, 36, 36);
-            Prg_Process.Dock = DockStyle.Bottom;
-            Prg_Process.Location = new Point(0, 452);
-            Prg_Process.Margin = new Padding(0);
-            Prg_Process.Name = "Prg_Process";
-            Prg_Process.Size = new Size(118, 20);
-            Prg_Process.TabIndex = 1;
-            // 
-            // Pnl_ImagePreview
-            // 
-            Pnl_ImagePreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Pnl_ImagePreview.BackColor = Color.Transparent;
-            Pnl_ImagePreview.BackgroundImageLayout = ImageLayout.Center;
-            Pnl_ImagePreview.Location = new Point(60, 188);
-            Pnl_ImagePreview.Name = "Pnl_ImagePreview";
-            Pnl_ImagePreview.Size = new Size(0, 98);
-            Pnl_ImagePreview.TabIndex = 2;
-            // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel2.BackColor = Color.FromArgb(36, 36, 36);
-            panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(Lbl_ApplicationVersion);
-            panel2.Controls.Add(Lbl_Log);
-            panel2.Location = new Point(-1, 529);
-            panel2.Margin = new Padding(0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(786, 33);
-            panel2.TabIndex = 1;
-            // 
-            // Lbl_ApplicationVersion
-            // 
-            Lbl_ApplicationVersion.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            Lbl_ApplicationVersion.AutoSize = true;
-            Lbl_ApplicationVersion.Font = new Font("Lato", 12F);
-            Lbl_ApplicationVersion.ForeColor = SystemColors.Control;
-            Lbl_ApplicationVersion.Location = new Point(728, 6);
-            Lbl_ApplicationVersion.Margin = new Padding(2);
-            Lbl_ApplicationVersion.Name = "Lbl_ApplicationVersion";
-            Lbl_ApplicationVersion.Size = new Size(44, 19);
-            Lbl_ApplicationVersion.TabIndex = 0;
-            Lbl_ApplicationVersion.Text = "0.0.0";
-            // 
-            // Lbl_Log
-            // 
-            Lbl_Log.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            Lbl_Log.AutoSize = true;
-            Lbl_Log.Font = new Font("Lato", 12F, FontStyle.Bold);
-            Lbl_Log.ForeColor = SystemColors.Control;
-            Lbl_Log.Location = new Point(12, 6);
-            Lbl_Log.Margin = new Padding(2);
-            Lbl_Log.Name = "Lbl_Log";
-            Lbl_Log.Size = new Size(55, 19);
-            Lbl_Log.TabIndex = 0;
-            Lbl_Log.Text = "Ready.";
-            // 
-            // Btn_Upscale
-            // 
-            Btn_Upscale.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Btn_Upscale.BackColor = Color.FromArgb(50, 50, 50);
-            Btn_Upscale.Cursor = Cursors.Hand;
-            Btn_Upscale.FlatAppearance.BorderSize = 0;
-            Btn_Upscale.FlatStyle = FlatStyle.Flat;
-            Btn_Upscale.Font = new Font("Lato", 12F, FontStyle.Bold);
-            Btn_Upscale.ForeColor = SystemColors.Control;
-            Btn_Upscale.Location = new Point(5, 61);
-            Btn_Upscale.Name = "Btn_Upscale";
-            Btn_Upscale.Size = new Size(287, 50);
-            Btn_Upscale.TabIndex = 0;
-            Btn_Upscale.Text = "Upscale";
-            Btn_Upscale.UseVisualStyleBackColor = false;
-            Btn_Upscale.Click += Btn_Upscale_Click;
-            // 
-            // panel1
-            // 
-            panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            panel1.BackColor = Color.FromArgb(36, 36, 36);
-            panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Controls.Add(Btn_Clear);
-            panel1.Controls.Add(Btn_Upscale);
-            panel1.Location = new Point(473, 401);
-            panel1.Name = "panel1";
-            panel1.Padding = new Padding(2);
-            panel1.Size = new Size(299, 118);
-            panel1.TabIndex = 5;
-            // 
-            // Btn_Clear
-            // 
-            Btn_Clear.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            Btn_Clear.BackColor = Color.FromArgb(50, 50, 50);
-            Btn_Clear.Cursor = Cursors.Hand;
-            Btn_Clear.Enabled = false;
-            Btn_Clear.FlatAppearance.BorderSize = 0;
-            Btn_Clear.FlatStyle = FlatStyle.Flat;
-            Btn_Clear.Font = new Font("Lato", 12F, FontStyle.Bold);
-            Btn_Clear.ForeColor = SystemColors.Control;
-            Btn_Clear.Location = new Point(5, 5);
-            Btn_Clear.Name = "Btn_Clear";
-            Btn_Clear.Size = new Size(287, 50);
-            Btn_Clear.TabIndex = 1;
-            Btn_Clear.Text = "Clear";
-            Btn_Clear.UseVisualStyleBackColor = false;
-            Btn_Clear.Click += Btn_Clear_Click;
-            // 
-            // panel3
-            // 
-            panel3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            panel3.BackColor = Color.FromArgb(36, 36, 36);
-            panel3.BorderStyle = BorderStyle.FixedSingle;
-            panel3.Controls.Add(Cmb_AI_Model);
-            panel3.Controls.Add(label6);
-            panel3.Controls.Add(label1);
-            panel3.Location = new Point(12, 185);
-            panel3.Margin = new Padding(3, 5, 3, 5);
-            panel3.Name = "panel3";
-            panel3.Padding = new Padding(2);
-            panel3.Size = new Size(315, 84);
-            panel3.TabIndex = 0;
-            // 
-            // Cmb_AI_Model
-            // 
-            Cmb_AI_Model.BackColor = SystemColors.Window;
-            Cmb_AI_Model.Cursor = Cursors.Hand;
-            Cmb_AI_Model.DropDownHeight = 100;
-            Cmb_AI_Model.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_AI_Model.Font = new Font("Segoe UI", 12F);
-            Cmb_AI_Model.ForeColor = SystemColors.ControlText;
-            Cmb_AI_Model.FormattingEnabled = true;
-            Cmb_AI_Model.IntegralHeight = false;
-            Cmb_AI_Model.Location = new Point(85, 38);
-            Cmb_AI_Model.Name = "Cmb_AI_Model";
-            Cmb_AI_Model.Size = new Size(215, 29);
-            Cmb_AI_Model.TabIndex = 0;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Lato", 12F);
-            label6.ForeColor = SystemColors.Control;
-            label6.Location = new Point(10, 43);
-            label6.Margin = new Padding(8, 2, 7, 2);
-            label6.Name = "label6";
-            label6.Size = new Size(54, 19);
-            label6.TabIndex = 0;
-            label6.Text = "Model";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Lato", 14F, FontStyle.Bold);
-            label1.ForeColor = SystemColors.Control;
-            label1.Location = new Point(10, 11);
-            label1.Margin = new Padding(8);
-            label1.Name = "label1";
-            label1.Size = new Size(29, 23);
-            label1.TabIndex = 0;
-            label1.Text = "AI";
-            // 
-            // panel4
-            // 
-            panel4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            panel4.BackColor = Color.FromArgb(36, 36, 36);
-            panel4.BorderStyle = BorderStyle.FixedSingle;
-            panel4.Controls.Add(Cmb_CPU_Threads);
-            panel4.Controls.Add(label2);
-            panel4.Controls.Add(label7);
-            panel4.Location = new Point(12, 279);
-            panel4.Margin = new Padding(3, 5, 3, 5);
-            panel4.Name = "panel4";
-            panel4.Padding = new Padding(2);
-            panel4.Size = new Size(315, 85);
-            panel4.TabIndex = 1;
-            // 
-            // Cmb_CPU_Threads
-            // 
-            Cmb_CPU_Threads.BackColor = SystemColors.Window;
-            Cmb_CPU_Threads.Cursor = Cursors.Hand;
-            Cmb_CPU_Threads.DropDownHeight = 100;
-            Cmb_CPU_Threads.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_CPU_Threads.Font = new Font("Segoe UI", 12F);
-            Cmb_CPU_Threads.ForeColor = SystemColors.ControlText;
-            Cmb_CPU_Threads.FormattingEnabled = true;
-            Cmb_CPU_Threads.IntegralHeight = false;
-            Cmb_CPU_Threads.Location = new Point(85, 38);
-            Cmb_CPU_Threads.Name = "Cmb_CPU_Threads";
-            Cmb_CPU_Threads.Size = new Size(215, 29);
-            Cmb_CPU_Threads.TabIndex = 0;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Lato", 14F, FontStyle.Bold);
-            label2.ForeColor = SystemColors.Control;
-            label2.Location = new Point(10, 11);
-            label2.Margin = new Padding(8);
-            label2.Name = "label2";
-            label2.Size = new Size(49, 23);
-            label2.TabIndex = 0;
-            label2.Text = "CPU";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Lato", 12F);
-            label7.ForeColor = SystemColors.Control;
-            label7.Location = new Point(10, 43);
-            label7.Margin = new Padding(8, 2, 7, 2);
-            label7.Name = "label7";
-            label7.Size = new Size(65, 19);
-            label7.TabIndex = 0;
-            label7.Text = "Threads";
-            // 
-            // panel5
-            // 
-            panel5.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            panel5.BackColor = Color.FromArgb(36, 36, 36);
-            panel5.BorderStyle = BorderStyle.FixedSingle;
-            panel5.Controls.Add(Cmb_GPU_ThreadsWriting);
-            panel5.Controls.Add(Cmb_GPU_ThreadsReading);
-            panel5.Controls.Add(Cmb_GPU_ThreadsUpload);
-            panel5.Controls.Add(label3);
-            panel5.Controls.Add(label10);
-            panel5.Controls.Add(label9);
-            panel5.Controls.Add(label8);
-            panel5.Location = new Point(12, 375);
-            panel5.Margin = new Padding(3, 5, 3, 5);
-            panel5.Name = "panel5";
-            panel5.Padding = new Padding(2);
-            panel5.Size = new Size(315, 144);
-            panel5.TabIndex = 2;
-            // 
-            // Cmb_GPU_ThreadsWriting
-            // 
-            Cmb_GPU_ThreadsWriting.BackColor = SystemColors.Window;
-            Cmb_GPU_ThreadsWriting.Cursor = Cursors.Hand;
-            Cmb_GPU_ThreadsWriting.DropDownHeight = 100;
-            Cmb_GPU_ThreadsWriting.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_GPU_ThreadsWriting.Font = new Font("Segoe UI", 12F);
-            Cmb_GPU_ThreadsWriting.ForeColor = SystemColors.ControlText;
-            Cmb_GPU_ThreadsWriting.FormattingEnabled = true;
-            Cmb_GPU_ThreadsWriting.IntegralHeight = false;
-            Cmb_GPU_ThreadsWriting.Location = new Point(146, 99);
-            Cmb_GPU_ThreadsWriting.Margin = new Padding(3, 3, 8, 3);
-            Cmb_GPU_ThreadsWriting.Name = "Cmb_GPU_ThreadsWriting";
-            Cmb_GPU_ThreadsWriting.Size = new Size(154, 29);
-            Cmb_GPU_ThreadsWriting.TabIndex = 2;
-            // 
-            // Cmb_GPU_ThreadsReading
-            // 
-            Cmb_GPU_ThreadsReading.BackColor = SystemColors.Window;
-            Cmb_GPU_ThreadsReading.Cursor = Cursors.Hand;
-            Cmb_GPU_ThreadsReading.DropDownHeight = 100;
-            Cmb_GPU_ThreadsReading.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_GPU_ThreadsReading.Font = new Font("Segoe UI", 12F);
-            Cmb_GPU_ThreadsReading.ForeColor = SystemColors.ControlText;
-            Cmb_GPU_ThreadsReading.FormattingEnabled = true;
-            Cmb_GPU_ThreadsReading.IntegralHeight = false;
-            Cmb_GPU_ThreadsReading.Location = new Point(146, 68);
-            Cmb_GPU_ThreadsReading.Name = "Cmb_GPU_ThreadsReading";
-            Cmb_GPU_ThreadsReading.Size = new Size(154, 29);
-            Cmb_GPU_ThreadsReading.TabIndex = 1;
-            // 
-            // Cmb_GPU_ThreadsUpload
-            // 
-            Cmb_GPU_ThreadsUpload.BackColor = SystemColors.Window;
-            Cmb_GPU_ThreadsUpload.Cursor = Cursors.Hand;
-            Cmb_GPU_ThreadsUpload.DropDownHeight = 100;
-            Cmb_GPU_ThreadsUpload.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_GPU_ThreadsUpload.Font = new Font("Segoe UI", 12F);
-            Cmb_GPU_ThreadsUpload.ForeColor = SystemColors.ControlText;
-            Cmb_GPU_ThreadsUpload.FormattingEnabled = true;
-            Cmb_GPU_ThreadsUpload.IntegralHeight = false;
-            Cmb_GPU_ThreadsUpload.Location = new Point(146, 37);
-            Cmb_GPU_ThreadsUpload.Name = "Cmb_GPU_ThreadsUpload";
-            Cmb_GPU_ThreadsUpload.Size = new Size(154, 29);
-            Cmb_GPU_ThreadsUpload.TabIndex = 0;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Lato", 14F, FontStyle.Bold);
-            label3.ForeColor = SystemColors.Control;
-            label3.Location = new Point(10, 11);
-            label3.Margin = new Padding(8);
-            label3.Name = "label3";
-            label3.Size = new Size(50, 23);
-            label3.TabIndex = 0;
-            label3.Text = "GPU";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Lato", 12F);
-            label10.ForeColor = SystemColors.Control;
-            label10.Location = new Point(10, 104);
-            label10.Margin = new Padding(8, 8, 7, 2);
-            label10.Name = "label10";
-            label10.Size = new Size(122, 19);
-            label10.TabIndex = 0;
-            label10.Text = "Writing Threads";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Lato", 12F);
-            label9.ForeColor = SystemColors.Control;
-            label9.Location = new Point(10, 73);
-            label9.Margin = new Padding(8, 8, 7, 2);
-            label9.Name = "label9";
-            label9.Size = new Size(124, 19);
-            label9.TabIndex = 0;
-            label9.Text = "Reading Threads";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Lato", 12F);
-            label8.ForeColor = SystemColors.Control;
-            label8.Location = new Point(10, 42);
-            label8.Margin = new Padding(8, 2, 7, 2);
-            label8.Name = "label8";
-            label8.Size = new Size(120, 19);
-            label8.TabIndex = 0;
-            label8.Text = "Upload Threads";
-            // 
-            // panel6
-            // 
-            panel6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            panel6.BackColor = Color.FromArgb(36, 36, 36);
-            panel6.BorderStyle = BorderStyle.FixedSingle;
-            panel6.Controls.Add(Chk_UseSuffix);
-            panel6.Controls.Add(Cmb_FileExtension);
-            panel6.Controls.Add(label5);
-            panel6.Controls.Add(label13);
-            panel6.Controls.Add(label12);
-            panel6.Location = new Point(473, 279);
-            panel6.Margin = new Padding(3, 5, 3, 5);
-            panel6.Name = "panel6";
-            panel6.Padding = new Padding(2);
-            panel6.Size = new Size(299, 113);
-            panel6.TabIndex = 4;
-            // 
-            // Chk_UseSuffix
-            // 
-            Chk_UseSuffix.AutoSize = true;
-            Chk_UseSuffix.BackColor = Color.FromArgb(32, 32, 32);
-            Chk_UseSuffix.Cursor = Cursors.Hand;
-            Chk_UseSuffix.Font = new Font("Segoe UI", 10F);
-            Chk_UseSuffix.ForeColor = SystemColors.ControlText;
-            Chk_UseSuffix.Location = new Point(96, 79);
-            Chk_UseSuffix.Margin = new Padding(3, 9, 3, 3);
-            Chk_UseSuffix.Name = "Chk_UseSuffix";
-            Chk_UseSuffix.Size = new Size(15, 14);
-            Chk_UseSuffix.TabIndex = 1;
-            Chk_UseSuffix.UseVisualStyleBackColor = false;
-            // 
-            // Cmb_FileExtension
-            // 
-            Cmb_FileExtension.BackColor = SystemColors.Window;
-            Cmb_FileExtension.Cursor = Cursors.Hand;
-            Cmb_FileExtension.DropDownHeight = 100;
-            Cmb_FileExtension.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_FileExtension.Font = new Font("Segoe UI", 12F);
-            Cmb_FileExtension.ForeColor = SystemColors.ControlText;
-            Cmb_FileExtension.FormattingEnabled = true;
-            Cmb_FileExtension.IntegralHeight = false;
-            Cmb_FileExtension.Location = new Point(96, 38);
-            Cmb_FileExtension.Name = "Cmb_FileExtension";
-            Cmb_FileExtension.Size = new Size(139, 29);
-            Cmb_FileExtension.TabIndex = 0;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Lato", 14F, FontStyle.Bold);
-            label5.ForeColor = SystemColors.Control;
-            label5.Location = new Point(10, 11);
-            label5.Margin = new Padding(8);
-            label5.Name = "label5";
-            label5.Size = new Size(71, 23);
-            label5.TabIndex = 0;
-            label5.Text = "Format";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Lato", 12F);
-            label13.ForeColor = SystemColors.Control;
-            label13.Location = new Point(10, 76);
-            label13.Margin = new Padding(8, 2, 7, 2);
-            label13.Name = "label13";
-            label13.Size = new Size(80, 19);
-            label13.TabIndex = 0;
-            label13.Text = "Use Suffix";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Lato", 12F);
-            label12.ForeColor = SystemColors.Control;
-            label12.Location = new Point(10, 43);
-            label12.Margin = new Padding(8, 8, 7, 2);
-            label12.Name = "label12";
-            label12.Size = new Size(78, 19);
-            label12.TabIndex = 0;
-            label12.Text = "Extension";
-            // 
-            // panel7
-            // 
-            panel7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            panel7.BackColor = Color.FromArgb(36, 36, 36);
-            panel7.BorderStyle = BorderStyle.FixedSingle;
-            panel7.Controls.Add(Cmb_TileSize);
-            panel7.Controls.Add(label4);
-            panel7.Controls.Add(label11);
-            panel7.Location = new Point(473, 185);
-            panel7.Margin = new Padding(3, 5, 3, 5);
-            panel7.Name = "panel7";
-            panel7.Padding = new Padding(2);
-            panel7.Size = new Size(299, 84);
-            panel7.TabIndex = 3;
-            // 
-            // Cmb_TileSize
-            // 
-            Cmb_TileSize.BackColor = SystemColors.Window;
-            Cmb_TileSize.Cursor = Cursors.Hand;
-            Cmb_TileSize.DropDownHeight = 100;
-            Cmb_TileSize.DropDownStyle = ComboBoxStyle.DropDownList;
-            Cmb_TileSize.Font = new Font("Segoe UI", 12F);
-            Cmb_TileSize.ForeColor = SystemColors.ControlText;
-            Cmb_TileSize.FormattingEnabled = true;
-            Cmb_TileSize.IntegralHeight = false;
-            Cmb_TileSize.Location = new Point(96, 38);
-            Cmb_TileSize.Name = "Cmb_TileSize";
-            Cmb_TileSize.Size = new Size(139, 29);
-            Cmb_TileSize.TabIndex = 0;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Lato", 14F, FontStyle.Bold);
-            label4.ForeColor = SystemColors.Control;
-            label4.Location = new Point(10, 11);
-            label4.Margin = new Padding(8);
-            label4.Name = "label4";
-            label4.Size = new Size(57, 23);
-            label4.TabIndex = 0;
-            label4.Text = "Tiling";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Lato", 12F);
-            label11.ForeColor = SystemColors.Control;
-            label11.Location = new Point(10, 43);
-            label11.Margin = new Padding(8, 2, 7, 2);
-            label11.Name = "label11";
-            label11.Size = new Size(37, 19);
-            label11.TabIndex = 0;
-            label11.Text = "Size";
-            // 
-            // panel8
-            // 
-            panel8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel8.BackColor = Color.FromArgb(36, 36, 36);
-            panel8.BorderStyle = BorderStyle.FixedSingle;
-            panel8.Location = new Point(-1, 0);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(786, 33);
-            panel8.TabIndex = 7;
-            // 
-            // Btn_Donate
-            // 
-            Btn_Donate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Btn_Donate.BackgroundImage = (Image)resources.GetObject("Btn_Donate.BackgroundImage");
-            Btn_Donate.BackgroundImageLayout = ImageLayout.Stretch;
-            Btn_Donate.Cursor = Cursors.Hand;
-            Btn_Donate.FlatAppearance.BorderSize = 0;
-            Btn_Donate.FlatStyle = FlatStyle.Flat;
-            Btn_Donate.ForeColor = SystemColors.Control;
-            Btn_Donate.Location = new Point(-1, -1);
-            Btn_Donate.Margin = new Padding(0);
-            Btn_Donate.Name = "Btn_Donate";
-            Btn_Donate.Size = new Size(299, 80);
-            Btn_Donate.TabIndex = 8;
-            Btn_Donate.UseVisualStyleBackColor = true;
-            Btn_Donate.Click += Btn_DonatePayPal_Click;
-            // 
-            // panel9
-            // 
-            panel9.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            panel9.BackColor = Color.FromArgb(36, 36, 36);
-            panel9.BorderStyle = BorderStyle.FixedSingle;
-            panel9.Controls.Add(Btn_Donate);
-            panel9.Location = new Point(473, 95);
-            panel9.Margin = new Padding(3, 5, 3, 5);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(299, 80);
-            panel9.TabIndex = 3;
-            // 
-            // FormMain
-            // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(32, 32, 32);
-            ClientSize = new Size(784, 561);
-            Controls.Add(panel5);
-            Controls.Add(panel4);
-            Controls.Add(panel9);
-            Controls.Add(panel7);
-            Controls.Add(panel6);
-            Controls.Add(panel3);
-            Controls.Add(panel1);
-            Controls.Add(panel2);
-            Controls.Add(Pnl_DragImage);
-            Controls.Add(panel8);
-            Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "FormMain";
-            Text = "Sharp Forge";
-            WindowState = FormWindowState.Maximized;
-            Pnl_DragImage.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
-            panel5.ResumeLayout(false);
-            panel5.PerformLayout();
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
-            panel7.ResumeLayout(false);
-            panel7.PerformLayout();
-            panel9.ResumeLayout(false);
-            ResumeLayout(false);
-        }
-
-        #endregion
-
-        private Panel Pnl_DragImage;
-        private Panel panel2;
-        private Button Btn_Upscale;
-        private Panel panel1;
-        private Button Btn_Clear;
-        private Label Lbl_Log;
-        private ProgressBar Prg_Process;
-        private Panel panel3;
-        private Panel panel4;
-        private Panel panel5;
-        private Panel panel6;
-        private Panel panel7;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label5;
-        private Label label4;
-        private Label label6;
-        private ComboBox Cmb_AI_Model;
-        private ComboBox Cmb_CPU_Threads;
-        private Label label7;
-        private ComboBox Cmb_GPU_ThreadsWriting;
-        private ComboBox Cmb_GPU_ThreadsReading;
-        private ComboBox Cmb_GPU_ThreadsUpload;
-        private Label label10;
-        private Label label9;
-        private Label label8;
-        private ComboBox Cmb_FileExtension;
-        private Label label12;
-        private ComboBox Cmb_TileSize;
-        private Label label11;
-        private CheckBox Chk_UseSuffix;
-        private Label label13;
-        private Label Lbl_ApplicationVersion;
-        private Panel Pnl_ImagePreview;
-        private Panel panel8;
-        private Button Btn_Donate;
-        private Panel panel9;
+        base.Dispose(disposing);
     }
+
+    #region Windows Form Designer generated code
+
+    /// <summary>
+    /// Creates and arranges the visual controls used by the main window.
+    /// </summary>
+    private void InitializeComponent()
+    {
+        components = new System.ComponentModel.Container();
+        System.ComponentModel.ComponentResourceManager resources = new(typeof(FormMain));
+        MainToolTip = new ToolTip(components);
+        ElapsedTimer = new System.Windows.Forms.Timer(components) { Interval = 250 };
+        ElapsedTimer.Tick += ElapsedTimer_Tick;
+
+        RootLayout = new TableLayoutPanel
+        {
+            BackColor = UiTheme.Window,
+            ColumnCount = 1,
+            Dock = DockStyle.Fill,
+            Margin = Padding.Empty,
+            RowCount = 3
+        };
+        RootLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 92F));
+        RootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
+
+        InitializeHeader();
+        InitializeContent();
+        InitializeStatusBar();
+        RootLayout.Controls.Add(HeaderPanel, 0, 0);
+        RootLayout.Controls.Add(ContentLayout, 0, 1);
+        RootLayout.Controls.Add(StatusPanel, 0, 2);
+
+        AllowDrop = true;
+        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleMode = AutoScaleMode.Font;
+        BackColor = UiTheme.Window;
+        ClientSize = new Size(1440, 900);
+        Controls.Add(RootLayout);
+        Icon = (Icon?)resources.GetObject("$this.Icon");
+        MinimumSize = new Size(1080, 700);
+        Name = "FormMain";
+        StartPosition = FormStartPosition.CenterScreen;
+        Text = "Sharp Forge";
+        FormClosing += FormMain_FormClosing;
+        DragDrop += Preview_DragDrop;
+        DragEnter += Preview_DragEnter;
+    }
+
+    /// <summary>
+    /// Creates the responsive title and action toolbar.
+    /// </summary>
+    private void InitializeHeader()
+    {
+        HeaderPanel = new Panel
+        {
+            BackColor = UiTheme.Window,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(26, 14, 26, 8)
+        };
+
+        TableLayoutPanel headerLayout = new()
+        {
+            ColumnCount = 2,
+            Dock = DockStyle.Fill,
+            RowCount = 1
+        };
+        headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+
+        Panel titlePanel = new() { Dock = DockStyle.Fill };
+        Lbl_Title = new Label
+        {
+            AutoSize = true,
+            Font = new Font("Segoe UI", 19F, FontStyle.Bold),
+            ForeColor = UiTheme.TextPrimary,
+            Location = new Point(0, 3),
+            Text = "Sharp Forge"
+        };
+        Lbl_Subtitle = new Label
+        {
+            AutoSize = true,
+            Font = new Font("Segoe UI", 9F),
+            ForeColor = UiTheme.TextSecondary,
+            Location = new Point(2, 42),
+            Text = "Batch AI upscaling powered by Real-ESRGAN"
+        };
+        titlePanel.Controls.AddRange([Lbl_Title, Lbl_Subtitle]);
+
+        FlowLayoutPanel actionsPanel = new()
+        {
+            AutoSize = true,
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.LeftToRight,
+            Padding = new Padding(0, 10, 0, 0),
+            WrapContents = false
+        };
+        Btn_AddImages = CreateToolbarButton("Add Images", 132, "image-plus");
+        Btn_AddImages.Click += Btn_AddImages_Click;
+        Btn_Upscale = CreateToolbarButton("Start Upscaling", 158, "play", isPrimary: true);
+        _startUpscaleIcon = Btn_Upscale.Image!;
+        _cancelUpscaleIcon = CreateUiIcon("square", 16, Color.White);
+        _queueCheckIcon = CreateUiIcon("circle-check", 17, Color.FromArgb(145, 198, 255));
+        Btn_Upscale.Enabled = false;
+        Btn_Upscale.Click += Btn_Upscale_Click;
+        Btn_Clear = CreateToolbarButton("Clear Queue", 132, "trash");
+        Btn_Clear.Enabled = false;
+        Btn_Clear.Click += Btn_Clear_Click;
+        Btn_ToggleSettings = CreateToolbarButton(string.Empty, 46, "settings");
+        Btn_ToggleSettings.Click += Btn_ToggleSettings_Click;
+        Btn_Donate = CreateToolbarButton(string.Empty, 46, "heart");
+        Btn_Donate.Click += Btn_Donate_Click;
+
+        MainToolTip.SetToolTip(Btn_AddImages, "Select one or more source images.");
+        MainToolTip.SetToolTip(Btn_Upscale, "Start the queue or cancel the active task.");
+        MainToolTip.SetToolTip(Btn_Clear, "Remove every image from the queue.");
+        MainToolTip.SetToolTip(Btn_ToggleSettings, "Show or hide the settings sidebar.");
+        MainToolTip.SetToolTip(Btn_Donate, "Support Sharp Forge development.");
+        actionsPanel.Controls.AddRange([Btn_Upscale, Btn_Clear, Btn_AddImages, Btn_Donate, Btn_ToggleSettings]);
+
+        headerLayout.Controls.Add(titlePanel, 0, 0);
+        headerLayout.Controls.Add(actionsPanel, 1, 0);
+        HeaderPanel.Controls.Add(headerLayout);
+    }
+
+    /// <summary>
+    /// Creates the settings sidebar and preview workspace.
+    /// </summary>
+    private void InitializeContent()
+    {
+        ContentLayout = new TableLayoutPanel
+        {
+            BackColor = UiTheme.Window,
+            ColumnCount = 2,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(26, 8, 26, 10),
+            RowCount = 1
+        };
+        ContentLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
+        ContentLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        ContentLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+        SettingsPanel = new Panel
+        {
+            AutoScroll = true,
+            BackColor = UiTheme.Window,
+            Dock = DockStyle.Fill,
+            Margin = new Padding(0, 0, 10, 0)
+        };
+        SettingsFlow = new FlowLayoutPanel
+        {
+            AutoScroll = true,
+            BackColor = UiTheme.Window,
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.TopDown,
+            Margin = Padding.Empty,
+            WrapContents = false
+        };
+
+        InitializeQueueSection();
+        InitializeModelSection();
+        InitializePerformanceSection();
+        InitializePipelineSection();
+        InitializeOutputSection();
+        SettingsFlow.Controls.AddRange([Grp_Queue, Grp_Model, Grp_Performance, Grp_Advanced, Grp_Output]);
+        SettingsPanel.Controls.Add(SettingsFlow);
+
+        InitializePreview();
+        ContentLayout.Controls.Add(SettingsPanel, 0, 0);
+        ContentLayout.Controls.Add(PreviewPanel, 1, 0);
+    }
+
+    /// <summary>
+    /// Creates the owner-drawn image queue card.
+    /// </summary>
+    private void InitializeQueueSection()
+    {
+        Grp_Queue = CreateSectionCard("images", "QUEUE", 238);
+        Lbl_QueueBadge = new RoundedBadge
+        {
+            Anchor = AnchorStyles.Top | AnchorStyles.Right,
+            CornerRadius = 5,
+            Location = new Point(250, 11),
+            Size = new Size(26, 24),
+            Text = "0",
+        };
+        Lst_Images = new ListBox
+        {
+            BackColor = UiTheme.Surface,
+            BorderStyle = BorderStyle.None,
+            DrawMode = DrawMode.OwnerDrawFixed,
+            Font = new Font("Segoe UI", 9F),
+            ForeColor = UiTheme.TextPrimary,
+            IntegralHeight = false,
+            ItemHeight = 64,
+            Location = new Point(10, 43),
+            Size = new Size(270, 150)
+        };
+        Lst_Images.DrawItem += Lst_Images_DrawItem;
+        Lst_Images.SelectedIndexChanged += Lst_Images_SelectedIndexChanged;
+        Lbl_QueueCount = new Label
+        {
+            AutoEllipsis = true,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextSecondary,
+            Location = new Point(12, 206),
+            Size = new Size(185, 20),
+            Text = "Queue is empty"
+        };
+        Btn_RemoveSelected = new ModernButton
+        {
+            Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.Surface,
+            Enabled = false,
+            Image = CreateUiIcon("x", 14, UiTheme.TextSecondary),
+            Location = new Point(245, 199),
+            Size = new Size(34, 30),
+            Text = string.Empty
+        };
+        Btn_RemoveSelected.Click += Btn_RemoveSelected_Click;
+        MainToolTip.SetToolTip(Btn_RemoveSelected, "Remove the selected image from the queue.");
+        Grp_Queue.Controls.AddRange([Lbl_QueueBadge, Lst_Images, Lbl_QueueCount, Btn_RemoveSelected]);
+    }
+
+    /// <summary>
+    /// Creates the AI model card.
+    /// </summary>
+    private void InitializeModelSection()
+    {
+        Grp_Model = CreateSectionCard("sparkles", "AI MODEL", 88);
+        Cmb_AI_Model = CreateComboBox();
+        AddField(Grp_Model, "Model", Cmb_AI_Model, 42);
+    }
+
+    /// <summary>
+    /// Creates the performance settings card.
+    /// </summary>
+    private void InitializePerformanceSection()
+    {
+        Grp_Performance = CreateSectionCard("gauge", "PERFORMANCE", 140);
+        Cmb_ConcurrentJobs = CreateComboBox();
+        Cmb_TileSize = CreateComboBox();
+        Cmb_GPU_Id = CreateComboBox();
+        AddField(Grp_Performance, "Concurrent jobs", Cmb_ConcurrentJobs, 42);
+        AddField(Grp_Performance, "Tile size", Cmb_TileSize, 72);
+        AddField(Grp_Performance, "GPU ID", Cmb_GPU_Id, 102);
+        MainToolTip.SetToolTip(Cmb_ConcurrentJobs, "Use 1 unless your GPU can run multiple processes.");
+        MainToolTip.SetToolTip(Cmb_TileSize, "Lower values use less GPU memory.");
+    }
+
+    /// <summary>
+    /// Creates the Real-ESRGAN pipeline settings card.
+    /// </summary>
+    private void InitializePipelineSection()
+    {
+        Grp_Advanced = CreateSectionCard("cpu", "GPU PIPELINE", 140);
+        Cmb_GPU_ThreadsLoad = CreateComboBox();
+        Cmb_GPU_ThreadsProcess = CreateComboBox();
+        Cmb_GPU_ThreadsSave = CreateComboBox();
+        AddField(Grp_Advanced, "Load threads", Cmb_GPU_ThreadsLoad, 42);
+        AddField(Grp_Advanced, "Process threads", Cmb_GPU_ThreadsProcess, 72);
+        AddField(Grp_Advanced, "Save threads", Cmb_GPU_ThreadsSave, 102);
+    }
+
+    /// <summary>
+    /// Creates the output settings card.
+    /// </summary>
+    private void InitializeOutputSection()
+    {
+        Grp_Output = CreateSectionCard("folder-output", "OUTPUT", 110);
+        Cmb_FileExtension = CreateComboBox();
+        AddField(Grp_Output, "File format", Cmb_FileExtension, 42);
+        Chk_UseSuffix = new ModernCheckBox
+        {
+            Location = new Point(13, 78),
+            Size = new Size(260, 24),
+            Text = "Save beside source file with model suffix"
+        };
+        Grp_Output.Controls.Add(Chk_UseSuffix);
+    }
+
+    /// <summary>
+    /// Creates the preview card, toolbar, checkerboard canvas, and zoom controls.
+    /// </summary>
+    private void InitializePreview()
+    {
+        PreviewPanel = new RoundedPanel
+        {
+            AllowDrop = true,
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.Border,
+            BorderRadius = 10,
+            Dock = DockStyle.Fill,
+            Margin = new Padding(0, 0, 0, 0),
+            Padding = new Padding(1)
+        };
+
+        TableLayoutPanel previewHeader = new()
+        {
+            BackColor = UiTheme.Surface,
+            ColumnCount = 3,
+            Dock = DockStyle.Top,
+            Height = 50,
+            Padding = new Padding(12, 7, 8, 6)
+        };
+        previewHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 125F));
+        previewHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        previewHeader.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+
+        Panel previewTitle = new()
+        {
+            Dock = DockStyle.Fill,
+        };
+        PictureBox previewIcon = new()
+        {
+            Image = CreateUiIcon("eye", 16, UiTheme.Primary),
+            Location = new Point(3, 9),
+            Size = new Size(16, 16),
+            SizeMode = PictureBoxSizeMode.CenterImage,
+            TabStop = false
+        };
+        Label previewTitleText = new()
+        {
+            AutoSize = true,
+            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+            ForeColor = UiTheme.TextPrimary,
+            Location = new Point(29, 9),
+            Text = "PREVIEW"
+        };
+        previewTitle.Controls.AddRange([previewIcon, previewTitleText]);
+        Lbl_PreviewFileName = new Label
+        {
+            AutoEllipsis = true,
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+            ForeColor = UiTheme.TextPrimary,
+            Text = "No image selected",
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+
+        FlowLayoutPanel zoomControls = new()
+        {
+            AutoSize = true,
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.LeftToRight,
+            Margin = Padding.Empty,
+            WrapContents = false
+        };
+        Cmb_Zoom = CreateComboBox();
+        Cmb_Zoom.Margin = new Padding(3, 2, 4, 0);
+        Cmb_Zoom.Size = new Size(76, 30);
+        Cmb_Zoom.SelectedIndexChanged += Cmb_Zoom_SelectedIndexChanged;
+        Btn_ZoomOut = CreatePreviewButton("minus");
+        Btn_ZoomOut.Click += Btn_ZoomOut_Click;
+        Btn_ZoomIn = CreatePreviewButton("plus");
+        Btn_ZoomIn.Click += Btn_ZoomIn_Click;
+        Btn_Fullscreen = CreatePreviewButton("maximize");
+        Btn_Fullscreen.Click += Btn_Fullscreen_Click;
+        zoomControls.Controls.AddRange([Cmb_Zoom, Btn_ZoomOut, Btn_ZoomIn, Btn_Fullscreen]);
+
+        previewHeader.Controls.Add(previewTitle, 0, 0);
+        previewHeader.Controls.Add(Lbl_PreviewFileName, 1, 0);
+        previewHeader.Controls.Add(zoomControls, 2, 0);
+
+        PreviewCanvas = new CheckerboardPanel
+        {
+            AllowDrop = true,
+            Dock = DockStyle.Fill,
+            Margin = Padding.Empty,
+            Padding = new Padding(18)
+        };
+        PreviewCanvas.Resize += PreviewCanvas_Resize;
+        Pic_Preview = new PictureBox
+        {
+            AllowDrop = true,
+            BackColor = Color.Transparent,
+            Dock = DockStyle.Fill,
+            SizeMode = PictureBoxSizeMode.Zoom,
+            TabStop = false
+        };
+        Lbl_DropHint = new Label
+        {
+            AllowDrop = true,
+            BackColor = Color.Transparent,
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+            ForeColor = UiTheme.TextMuted,
+            Text = "Drop images or a folder here\n\nor use Add Images",
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+
+        AttachPreviewDropEvents(PreviewPanel);
+        AttachPreviewDropEvents(PreviewCanvas);
+        AttachPreviewDropEvents(Pic_Preview);
+        AttachPreviewDropEvents(Lbl_DropHint);
+        PreviewCanvas.Controls.Add(Pic_Preview);
+        PreviewCanvas.Controls.Add(Lbl_DropHint);
+        Lbl_DropHint.BringToFront();
+        PreviewPanel.Controls.Add(PreviewCanvas);
+        PreviewPanel.Controls.Add(previewHeader);
+    }
+
+    /// <summary>
+    /// Creates the responsive status bar and compact progress indicator.
+    /// </summary>
+    private void InitializeStatusBar()
+    {
+        StatusPanel = new RoundedPanel
+        {
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.BorderSubtle,
+            BorderRadius = 9,
+            Dock = DockStyle.Fill,
+            Margin = new Padding(26, 0, 26, 12),
+            Padding = new Padding(1)
+        };
+        Prg_Process = new ThinProgressBar { Dock = DockStyle.Top, Height = 3 };
+
+        TableLayoutPanel statusLayout = new()
+        {
+            ColumnCount = 4,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(12, 3, 12, 2),
+            RowCount = 1
+        };
+        statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 36F));
+        statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 24F));
+        statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+        statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 62F));
+
+        Lbl_Log = new Label
+        {
+            AutoEllipsis = true,
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextSecondary,
+            Text = "Ready",
+            TextAlign = ContentAlignment.MiddleLeft
+        };
+        Lbl_StatusQueue = new Label
+        {
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextSecondary,
+            Text = "Queue is empty",
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+        Lbl_TaskStatus = new Label
+        {
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextSecondary,
+            Text = "No active tasks  |  00:00:00",
+            TextAlign = ContentAlignment.MiddleRight
+        };
+        Lbl_ApplicationVersion = new Label
+        {
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextMuted,
+            Text = "0.0.0",
+            TextAlign = ContentAlignment.MiddleRight
+        };
+        statusLayout.Controls.Add(Lbl_Log, 0, 0);
+        statusLayout.Controls.Add(Lbl_StatusQueue, 1, 0);
+        statusLayout.Controls.Add(Lbl_TaskStatus, 2, 0);
+        statusLayout.Controls.Add(Lbl_ApplicationVersion, 3, 0);
+        StatusPanel.Controls.Add(statusLayout);
+        StatusPanel.Controls.Add(Prg_Process);
+    }
+
+    /// <summary>
+    /// Creates a rounded card with an accent icon and uppercase title.
+    /// </summary>
+    /// <param name="iconName">The embedded SVG icon name.</param>
+    /// <param name="title">The section title.</param>
+    /// <param name="height">The card height.</param>
+    /// <returns>A styled section card.</returns>
+    private RoundedPanel CreateSectionCard(string iconName, string title, int height)
+    {
+        RoundedPanel card = new()
+        {
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.Border,
+            BorderRadius = 9,
+            Margin = new Padding(0, 0, 0, 12),
+            Size = new Size(286, height)
+        };
+        PictureBox icon = new()
+        {
+            Image = CreateUiIcon(iconName, 16, UiTheme.Primary),
+            Location = new Point(12, 12),
+            Size = new Size(16, 16),
+            SizeMode = PictureBoxSizeMode.CenterImage,
+            TabStop = false
+        };
+        Label titleLabel = new()
+        {
+            AutoSize = true,
+            Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+            ForeColor = UiTheme.TextPrimary,
+            Location = new Point(37, 14),
+            Text = title
+        };
+        card.Controls.AddRange([icon, titleLabel]);
+        return card;
+    }
+
+    /// <summary>
+    /// Adds a label and combo box row to a settings card.
+    /// </summary>
+    /// <param name="card">The destination settings card.</param>
+    /// <param name="labelText">The field label.</param>
+    /// <param name="comboBox">The field combo box.</param>
+    /// <param name="top">The row's top coordinate.</param>
+    private static void AddField(RoundedPanel card, string labelText, ModernComboBox comboBox, int top)
+    {
+        Label label = new()
+        {
+            AutoSize = true,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = UiTheme.TextSecondary,
+            Location = new Point(12, top + 6),
+            Text = labelText
+        };
+        comboBox.Location = new Point(150, top);
+        comboBox.Size = new Size(126, 30);
+        card.Controls.AddRange([label, comboBox]);
+    }
+
+    /// <summary>
+    /// Creates a themed combo box for settings and preview controls.
+    /// </summary>
+    /// <returns>A dark owner-drawn combo box.</returns>
+    private static ModernComboBox CreateComboBox()
+    {
+        return new ModernComboBox { TabIndex = 0 };
+    }
+
+    /// <summary>
+    /// Creates a toolbar button with primary or secondary styling.
+    /// </summary>
+    /// <param name="text">The button text.</param>
+    /// <param name="width">The button width.</param>
+    /// <param name="iconName">The embedded SVG icon name.</param>
+    /// <param name="isPrimary">Whether the button uses the primary accent style.</param>
+    /// <returns>A configured toolbar button.</returns>
+    private ModernButton CreateToolbarButton(
+        string text,
+        int width,
+        string iconName,
+        bool isPrimary = false)
+    {
+        return new ModernButton
+        {
+            BackColor = isPrimary ? UiTheme.Primary : UiTheme.Surface,
+            BorderColor = isPrimary ? UiTheme.Primary : UiTheme.Border,
+            HoverColor = isPrimary ? UiTheme.PrimaryHover : UiTheme.SurfaceHover,
+            Image = CreateUiIcon(iconName, 17, isPrimary ? Color.White : UiTheme.TextPrimary),
+            Margin = new Padding(5, 0, 5, 0),
+            Size = new Size(width, 42),
+            Text = text
+        };
+    }
+
+    /// <summary>
+    /// Creates a compact preview toolbar button.
+    /// </summary>
+    /// <param name="iconName">The embedded SVG icon name.</param>
+    /// <returns>A compact themed button.</returns>
+    private ModernButton CreatePreviewButton(string iconName)
+    {
+        return new ModernButton
+        {
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.Border,
+            Image = CreateUiIcon(iconName, 15, UiTheme.TextSecondary),
+            Margin = new Padding(2, 2, 2, 0),
+            Size = new Size(34, 30),
+            Text = string.Empty
+        };
+    }
+
+    /// <summary>
+    /// Creates and tracks an SVG icon for the lifetime of the form.
+    /// </summary>
+    /// <param name="iconName">The embedded SVG icon name.</param>
+    /// <param name="size">The raster size in pixels.</param>
+    /// <param name="color">The icon color.</param>
+    /// <returns>A bitmap owned by the form.</returns>
+    private Image CreateUiIcon(string iconName, int size, Color color)
+    {
+        Image icon = SvgIconProvider.Create(iconName, size, color);
+        _uiIcons.Add(icon);
+        return icon;
+    }
+
+    /// <summary>
+    /// Connects drag-and-drop events to a preview control.
+    /// </summary>
+    /// <param name="control">The control that should accept image drops.</param>
+    private void AttachPreviewDropEvents(Control control)
+    {
+        control.DragDrop += Preview_DragDrop;
+        control.DragEnter += Preview_DragEnter;
+    }
+
+    #endregion
+
+    private TableLayoutPanel RootLayout = null!;
+    private Panel HeaderPanel = null!;
+    private ModernButton Btn_Donate = null!;
+    private ModernButton Btn_AddImages = null!;
+    private ModernButton Btn_Upscale = null!;
+    private ModernButton Btn_Clear = null!;
+    private ModernButton Btn_ToggleSettings = null!;
+    private Label Lbl_Subtitle = null!;
+    private Label Lbl_Title = null!;
+    private TableLayoutPanel ContentLayout = null!;
+    private Panel SettingsPanel = null!;
+    private FlowLayoutPanel SettingsFlow = null!;
+    private RoundedPanel Grp_Queue = null!;
+    private ListBox Lst_Images = null!;
+    private Label Lbl_QueueCount = null!;
+    private RoundedBadge Lbl_QueueBadge = null!;
+    private ModernButton Btn_RemoveSelected = null!;
+    private RoundedPanel Grp_Model = null!;
+    private ModernComboBox Cmb_AI_Model = null!;
+    private RoundedPanel Grp_Performance = null!;
+    private ModernComboBox Cmb_GPU_Id = null!;
+    private ModernComboBox Cmb_TileSize = null!;
+    private ModernComboBox Cmb_ConcurrentJobs = null!;
+    private RoundedPanel Grp_Advanced = null!;
+    private ModernComboBox Cmb_GPU_ThreadsSave = null!;
+    private ModernComboBox Cmb_GPU_ThreadsProcess = null!;
+    private ModernComboBox Cmb_GPU_ThreadsLoad = null!;
+    private RoundedPanel Grp_Output = null!;
+    private ModernCheckBox Chk_UseSuffix = null!;
+    private ModernComboBox Cmb_FileExtension = null!;
+    private RoundedPanel PreviewPanel = null!;
+    private CheckerboardPanel PreviewCanvas = null!;
+    private PictureBox Pic_Preview = null!;
+    private Label Lbl_DropHint = null!;
+    private Label Lbl_PreviewFileName = null!;
+    private ModernComboBox Cmb_Zoom = null!;
+    private ModernButton Btn_ZoomOut = null!;
+    private ModernButton Btn_ZoomIn = null!;
+    private ModernButton Btn_Fullscreen = null!;
+    private RoundedPanel StatusPanel = null!;
+    private ThinProgressBar Prg_Process = null!;
+    private Label Lbl_Log = null!;
+    private Label Lbl_StatusQueue = null!;
+    private Label Lbl_TaskStatus = null!;
+    private Label Lbl_ApplicationVersion = null!;
+    private ToolTip MainToolTip = null!;
+    private System.Windows.Forms.Timer ElapsedTimer = null!;
+    private Image _startUpscaleIcon = null!;
+    private Image _cancelUpscaleIcon = null!;
+    private Image _queueCheckIcon = null!;
 }
