@@ -1,17 +1,15 @@
-namespace SharpForge
+namespace SharpForge;
+
+internal static class Program
 {
-    internal static class Program
+    /// <summary>
+    /// Configures WinForms defaults and starts the main application window.
+    /// </summary>
+    /// <param name="args">Optional image or directory paths to queue at startup.</param>
+    [STAThread]
+    private static void Main(string[] args)
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new FormMain());
-        }
+        ApplicationConfiguration.Initialize();
+        Application.Run(new FormMain(args));
     }
 }

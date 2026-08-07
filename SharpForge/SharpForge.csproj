@@ -1,16 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Version>1.3.1</Version>
+    <Authors>Kellvyn</Authors>
+    <Description>Batch image upscaling for Windows powered by Real-ESRGAN.</Description>
+    <NeutralLanguage>en</NeutralLanguage>
     <ApplicationIcon>Resources\Icons\minimalistic-icon-sharp-forge.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="Resources\Icons\minimalistic-icon-sharp-forge.ico" />
+    <EmbeddedResource Include="Resources\Icons\Svg\*.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Svg" Version="3.4.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,8 +41,12 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources\Thumbnails\" />
+  <ItemGroup Condition="Exists('Runtime\realesrgan')">
+    <None Remove="Runtime\realesrgan\**\*" />
+    <Content Include="Runtime\realesrgan\**\*"
+             Link="realesrgan\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
