@@ -13,6 +13,11 @@ internal static class ImagePreviewLoader
     /// <exception cref="ArgumentException">Thrown when the file does not contain a valid image.</exception>
     public static Bitmap Load(string filePath)
     {
+        if (string.Equals(Path.GetExtension(filePath), ".dds", StringComparison.OrdinalIgnoreCase))
+        {
+            return DdsImageService.Load(filePath);
+        }
+
         using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using Image source = Image.FromStream(stream);
 

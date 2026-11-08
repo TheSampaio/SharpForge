@@ -4,6 +4,9 @@ namespace SharpForge.Models;
 /// Defines the immutable settings used for one upscaling batch.
 /// </summary>
 /// <param name="ModelName">The Real-ESRGAN model name without its file extension.</param>
+/// <param name="ModelDirectory">The directory that contains the selected model files.</param>
+/// <param name="ModelPath">The checkpoint path for direct-inference backends.</param>
+/// <param name="Backend">The inference backend required by the selected model.</param>
 /// <param name="OutputFormat">The output image format without a leading dot.</param>
 /// <param name="TileSize">The tile size processed by Real-ESRGAN.</param>
 /// <param name="GpuId">The Vulkan GPU identifier.</param>
@@ -14,6 +17,9 @@ namespace SharpForge.Models;
 /// <param name="UseSuffix">Whether output files are saved beside their source with a model suffix.</param>
 internal sealed record UpscaleOptions(
     string ModelName,
+    string ModelDirectory,
+    string ModelPath,
+    UpscaleBackend Backend,
     string OutputFormat,
     int TileSize,
     int GpuId,

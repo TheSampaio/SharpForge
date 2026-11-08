@@ -8,7 +8,7 @@ namespace SharpForge.Services;
 /// <summary>
 /// Runs Real-ESRGAN through its NCNN Vulkan command-line executable.
 /// </summary>
-internal sealed class RealEsrganUpscaler : IImageUpscaler
+internal sealed class RealEsrganUpscaler
 {
     private readonly AppPaths _paths;
 
@@ -21,18 +21,31 @@ internal sealed class RealEsrganUpscaler : IImageUpscaler
         _paths = paths;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether the NCNN Vulkan executable is available.
+    /// </summary>
     public bool IsAvailable =>
-        File.Exists(_paths.UpscalerExecutable) && Directory.Exists(_paths.ModelsDirectory);
+        File.Exists(_paths.UpscalerExecutable);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Upscales one image with the NCNN Vulkan runtime.
+    /// </summary>
+    /// <param name="inputPath">The source image path.</param>
+    /// <param name="outputPath">The destination image path.</param>
+    /// <param name="options">The active upscaling settings.</param>
+    /// <param name="cancellationToken">A token that requests process cancellation.</param>
+    /// <returns>The result of the external upscaling process.</returns>
     public async Task<UpscaleResult> UpscaleAsync(
         string inputPath,
         string outputPath,
         UpscaleOptions options,
         CancellationToken cancellationToken)
     {
-        ProcessStartInfo startInfo = CreateStartInfo(inputPath, outputPath, options);
+        bool requiresDdsConversion = string.Equals(options.OutputFormat, "dds", StringComparison.OrdinalIgnoreCase);
+        string processOutputPath = requiresDdsConversion
+            ? $"{outputPath}.{Guid.NewGuid():N}.png"
+            : outputPath;
+        ProcessStartInfo startInfo = CreateStartInfo(inputPath, processOutputPath, options, requiresDdsConversion ? "png" : options.OutputFormat);
 
         using Process process = new() { StartInfo = startInfo };
 
@@ -53,6 +66,7 @@ internal sealed class RealEsrganUpscaler : IImageUpscaler
             catch (OperationCanceledException)
             {
                 await StopProcessAsync(process);
+                TryDeleteIncompleteOutput(processOutputPath);
                 TryDeleteIncompleteOutput(outputPath);
                 return new UpscaleResult(inputPath, outputPath, UpscaleStatus.Canceled);
             }
@@ -62,21 +76,46 @@ internal sealed class RealEsrganUpscaler : IImageUpscaler
 
             if (process.ExitCode == 0)
             {
+                if (requiresDdsConversion)
+                {
+                    try
+                    {
+                        await DdsImageService.SaveAsync(
+                            processOutputPath,
+                            outputPath,
+                            options.GpuId,
+                            cancellationToken);
+                    }
+                    catch (Exception exception) when (exception is ArgumentException or IOException or System.Runtime.InteropServices.ExternalException)
+                    {
+                        TryDeleteIncompleteOutput(outputPath);
+                        return Failure(inputPath, outputPath, $"DDS conversion failed: {exception.Message}");
+                    }
+                    finally
+                    {
+                        TryDeleteIncompleteOutput(processOutputPath);
+                    }
+                }
+
                 return new UpscaleResult(inputPath, outputPath, UpscaleStatus.Completed);
             }
 
             string details = string.IsNullOrWhiteSpace(error) ? output : error;
+            TryDeleteIncompleteOutput(processOutputPath);
             TryDeleteIncompleteOutput(outputPath);
             return Failure(inputPath, outputPath, details.Trim());
         }
         catch (OperationCanceledException)
         {
             await StopProcessAsync(process);
+            TryDeleteIncompleteOutput(processOutputPath);
             TryDeleteIncompleteOutput(outputPath);
             return new UpscaleResult(inputPath, outputPath, UpscaleStatus.Canceled);
         }
         catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception)
         {
+            TryDeleteIncompleteOutput(processOutputPath);
+            TryDeleteIncompleteOutput(outputPath);
             return Failure(inputPath, outputPath, exception.Message);
         }
     }
@@ -87,11 +126,13 @@ internal sealed class RealEsrganUpscaler : IImageUpscaler
     /// <param name="inputPath">The source image path.</param>
     /// <param name="outputPath">The destination image path.</param>
     /// <param name="options">The active upscaling settings.</param>
+    /// <param name="processOutputFormat">The image format written directly by the NCNN process.</param>
     /// <returns>A configured process start descriptor.</returns>
     private ProcessStartInfo CreateStartInfo(
         string inputPath,
         string outputPath,
-        UpscaleOptions options)
+        UpscaleOptions options,
+        string processOutputFormat)
     {
         ProcessStartInfo startInfo = new()
         {
@@ -105,9 +146,9 @@ internal sealed class RealEsrganUpscaler : IImageUpscaler
 
         AddArgument(startInfo, "-i", inputPath);
         AddArgument(startInfo, "-o", outputPath);
-        AddArgument(startInfo, "-m", _paths.ModelsDirectory);
+        AddArgument(startInfo, "-m", options.ModelDirectory);
         AddArgument(startInfo, "-n", options.ModelName);
-        AddArgument(startInfo, "-f", options.OutputFormat);
+        AddArgument(startInfo, "-f", processOutputFormat);
         AddArgument(startInfo, "-t", options.TileSize.ToString(CultureInfo.InvariantCulture));
         AddArgument(startInfo, "-g", options.GpuId.ToString(CultureInfo.InvariantCulture));
         AddArgument(
