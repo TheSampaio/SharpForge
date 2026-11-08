@@ -18,7 +18,10 @@ partial class FormMain
         {
             components?.Dispose();
             _currentPreview?.Dispose();
+            _currentAfterPreview?.Dispose();
             _cancellationTokenSource?.Dispose();
+            _modelImportCancellationTokenSource?.Dispose();
+            _upscaler.Dispose();
             DisposeQueueThumbnails();
             DisposeUiIcons();
         }
@@ -256,9 +259,21 @@ partial class FormMain
     /// </summary>
     private void InitializeModelSection()
     {
-        Grp_Model = CreateSectionCard("sparkles", "AI MODEL", 88);
+        Grp_Model = CreateSectionCard("sparkles", "AI MODEL", 124);
         Cmb_AI_Model = CreateComboBox();
         AddField(Grp_Model, "Model", Cmb_AI_Model, 42);
+        Btn_ImportModel = new ModernButton
+        {
+            BackColor = UiTheme.Surface,
+            BorderColor = UiTheme.Border,
+            Image = CreateUiIcon("plus", 14, UiTheme.TextSecondary),
+            Location = new Point(150, 78),
+            Size = new Size(126, 30),
+            Text = "Import Model"
+        };
+        Btn_ImportModel.Click += Btn_ImportModel_Click;
+        MainToolTip.SetToolTip(Btn_ImportModel, "Import a .pth checkpoint or a matching .param/.bin NCNN model pair.");
+        Grp_Model.Controls.Add(Btn_ImportModel);
     }
 
     /// <summary>
@@ -399,12 +414,11 @@ partial class FormMain
             Padding = new Padding(18)
         };
         PreviewCanvas.Resize += PreviewCanvas_Resize;
-        Pic_Preview = new PictureBox
+        Pic_Preview = new BeforeAfterViewer
         {
             AllowDrop = true,
             BackColor = Color.Transparent,
             Dock = DockStyle.Fill,
-            SizeMode = PictureBoxSizeMode.Zoom,
             TabStop = false
         };
         Lbl_DropHint = new Label
@@ -655,6 +669,7 @@ partial class FormMain
     private ModernButton Btn_RemoveSelected = null!;
     private RoundedPanel Grp_Model = null!;
     private ModernComboBox Cmb_AI_Model = null!;
+    private ModernButton Btn_ImportModel = null!;
     private RoundedPanel Grp_Performance = null!;
     private ModernComboBox Cmb_GPU_Id = null!;
     private ModernComboBox Cmb_TileSize = null!;
@@ -668,7 +683,7 @@ partial class FormMain
     private ModernComboBox Cmb_FileExtension = null!;
     private RoundedPanel PreviewPanel = null!;
     private CheckerboardPanel PreviewCanvas = null!;
-    private PictureBox Pic_Preview = null!;
+    private BeforeAfterViewer Pic_Preview = null!;
     private Label Lbl_DropHint = null!;
     private Label Lbl_PreviewFileName = null!;
     private ModernComboBox Cmb_Zoom = null!;

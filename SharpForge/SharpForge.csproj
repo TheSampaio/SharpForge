@@ -10,15 +10,27 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>1.3.1</Version>
+    <Version>1.5.1</Version>
     <Authors>Kellvyn</Authors>
-    <Description>Batch image upscaling for Windows powered by Real-ESRGAN.</Description>
+    <Description>Batch image upscaling for Windows with NCNN Vulkan and optional PyTorch CUDA backends.</Description>
     <NeutralLanguage>en</NeutralLanguage>
     <ApplicationIcon>Resources\Icons\minimalistic-icon-sharp-forge.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="Resources\Icons\minimalistic-icon-sharp-forge.ico" />
+    <Content Include="Resources\Scripts\normalize_esrgan.py"
+             Link="realesrgan\tools\pth2ncnn\normalize_esrgan.py"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Resources\Scripts\inspect_model.py"
+             Link="realesrgan\tools\pth2ncnn\inspect_model.py"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Resources\Scripts\sharpforge_worker.py"
+             Link="pytorch\sharpforge_worker.py"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
     <EmbeddedResource Include="Resources\Icons\Svg\*.svg" />
   </ItemGroup>
 
@@ -45,6 +57,14 @@
     <None Remove="Runtime\realesrgan\**\*" />
     <Content Include="Runtime\realesrgan\**\*"
              Link="realesrgan\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('Runtime\texconv')">
+    <None Remove="Runtime\texconv\**\*" />
+    <Content Include="Runtime\texconv\**\*"
+             Link="texconv\%(RecursiveDir)%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest"
              CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>

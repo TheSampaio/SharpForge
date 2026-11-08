@@ -18,20 +18,25 @@ public sealed partial class FormMain : Form
     private static readonly int[] ThreadCounts = [1, 2, 3, 4, 5, 6, 7, 8];
     private static readonly int[] TileSizes = [32, 64, 128, 256, 512, 1024];
     private const string DefaultModelName = "realesrgan-x4plus";
-    private static readonly string[] OutputFormats = ["png", "jpg", "webp"];
+    private static readonly string[] OutputFormats = ["png", "jpg", "dds"];
     private static readonly string[] ZoomLevels = ["Fit", "25%", "50%", "75%", "100%", "125%", "150%", "200%", "400%"];
 
     private readonly List<string> _imagePaths = [];
     private readonly List<Image> _uiIcons = [];
     private readonly Dictionary<string, Image> _queueThumbnails = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _upscaledPaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly Stopwatch _batchStopwatch = new();
-    private readonly RealEsrganUpscaler _upscaler;
+    private readonly ImageUpscalerRouter _upscaler;
     private readonly UpscaleBatchProcessor _batchProcessor;
     private readonly ModelDiscoveryService _modelDiscovery;
+    private readonly ModelImportService _modelImporter;
 
     private Image? _currentPreview;
+    private Image? _currentAfterPreview;
     private CancellationTokenSource? _cancellationTokenSource;
+    private CancellationTokenSource? _modelImportCancellationTokenSource;
     private bool _closeAfterCancellation;
+    private bool _isImportingModel;
     private bool _isProcessing;
     private bool _settingsVisible = true;
 
@@ -50,15 +55,24 @@ public sealed partial class FormMain : Form
     internal FormMain(IEnumerable<string> startupPaths)
     {
         AppPaths paths = AppPaths.CreateDefault();
-        _upscaler = new RealEsrganUpscaler(paths);
+        OptionalBackendInstaller optionalBackendInstaller = new(paths);
+        _upscaler = new ImageUpscalerRouter(
+            new RealEsrganUpscaler(paths),
+            new PyTorchUpscaler(paths, optionalBackendInstaller));
         _batchProcessor = new UpscaleBatchProcessor(_upscaler);
         _modelDiscovery = new ModelDiscoveryService(paths);
+        _modelImporter = new ModelImportService(paths, optionalBackendInstaller);
 
         InitializeComponent();
         InitializeView();
         AddImages(startupPaths);
 
-        if (_imagePaths.Count == 0)
+        if (Cmb_AI_Model.ItemCount == 0)
+        {
+            Lbl_Log.Text = "No usable models are installed. Import a model or run Build\\Setup.bat.";
+            Lbl_Log.ForeColor = UiTheme.Danger;
+        }
+        else if (_imagePaths.Count == 0)
         {
             Lbl_Log.Text = "Ready";
             Lbl_Log.ForeColor = UiTheme.Success;
@@ -74,11 +88,7 @@ public sealed partial class FormMain : Form
         Version? version = Assembly.GetExecutingAssembly().GetName().Version;
         Lbl_ApplicationVersion.Text = version?.ToString(3) ?? "0.0.0";
 
-        string[] modelNames = _modelDiscovery.GetAvailableModels().ToArray();
-        int defaultModelIndex = Array.FindIndex(
-            modelNames,
-            model => string.Equals(model, DefaultModelName, StringComparison.OrdinalIgnoreCase));
-        ConfigureComboBox(Cmb_AI_Model, modelNames, Math.Max(0, defaultModelIndex));
+        RefreshModelList(DefaultModelName);
         ConfigureComboBox(Cmb_ConcurrentJobs, ThreadCounts, 0);
         ConfigureComboBox(Cmb_TileSize, TileSizes, 2);
         ConfigureComboBox(Cmb_GPU_Id, [0], 0);
@@ -89,6 +99,25 @@ public sealed partial class FormMain : Form
         ConfigureComboBox(Cmb_Zoom, ZoomLevels, 0);
         NativeWindowTheme.ApplyToControl(SettingsFlow);
         NativeWindowTheme.ApplyToControl(Lst_Images);
+
+        Cmb_AI_Model.SelectedIndexChanged += PreviewSettings_SelectedIndexChanged;
+        Cmb_FileExtension.SelectedIndexChanged += PreviewSettings_SelectedIndexChanged;
+        Chk_UseSuffix.CheckedChanged += PreviewSettings_SelectedIndexChanged;
+    }
+
+    /// <summary>
+    /// Reloads usable model pairs and selects a preferred model when available.
+    /// </summary>
+    /// <param name="preferredModelName">The model name to select, or <see langword="null"/> to keep the current selection.</param>
+    private void RefreshModelList(string? preferredModelName = null)
+    {
+        string? currentName = (Cmb_AI_Model.SelectedItem as UpscaleModel)?.Name;
+        UpscaleModel[] models = _modelDiscovery.GetAvailableModels().ToArray();
+        string? selectionName = preferredModelName ?? currentName;
+        int selectedIndex = Array.FindIndex(
+            models,
+            model => string.Equals(model.Name, selectionName, StringComparison.OrdinalIgnoreCase));
+        ConfigureComboBox(Cmb_AI_Model, models, selectedIndex >= 0 ? selectedIndex : 0);
     }
 
     /// <summary>
@@ -132,6 +161,124 @@ public sealed partial class FormMain : Form
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             AddImages(dialog.FileNames);
+        }
+    }
+
+    /// <summary>
+    /// Opens a model picker, imports or converts the selected model, and refreshes the model list.
+    /// </summary>
+    /// <param name="sender">The control that raised the event.</param>
+    /// <param name="e">The event data.</param>
+    private async void Btn_ImportModel_Click(object? sender, EventArgs e)
+    {
+        if (_isProcessing || _isImportingModel)
+        {
+            return;
+        }
+
+        using OpenFileDialog dialog = new()
+        {
+            AddExtension = true,
+            CheckFileExists = true,
+            Filter = "Upscaling models|*.pth;*.safetensors;*.param;*.bin|PyTorch checkpoints|*.pth;*.safetensors|NCNN model files|*.param;*.bin|All files|*.*",
+            Multiselect = false,
+            RestoreDirectory = true,
+            Title = "Import an upscaling model"
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        if (string.Equals(Path.GetExtension(dialog.FileName), ".pth", StringComparison.OrdinalIgnoreCase) &&
+            MessageBox.Show(
+                this,
+                "PyTorch .pth files can contain executable pickle data. Import this checkpoint only if you trust its source. Continue?",
+                "Trust this model?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+        {
+            return;
+        }
+
+        Btn_ImportModel.Enabled = false;
+        SettingsFlow.Enabled = false;
+        _isImportingModel = true;
+        CancellationTokenSource importCancellation = new();
+        _modelImportCancellationTokenSource = importCancellation;
+        Progress<string> progress = new(message =>
+        {
+            Lbl_Log.Text = message;
+            Lbl_Log.ForeColor = UiTheme.Primary;
+        });
+
+        try
+        {
+            UpscaleModel importedModel;
+            try
+            {
+                importedModel = await _modelImporter.ImportAsync(
+                    dialog.FileName,
+                    progress,
+                    installOptionalBackend: false,
+                    importCancellation.Token);
+            }
+            catch (OptionalBackendRequiredException exception)
+            {
+                DialogResult installChoice = MessageBox.Show(
+                    this,
+                    $"This {exception.Architecture} model requires the optional PyTorch CUDA backend. " +
+                    "It downloads an isolated Python, PyTorch CUDA, and Spandrel runtime (several gigabytes) " +
+                    "into your local Sharp Forge application data. Install it now?",
+                    "Install optional CUDA backend?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+                if (installChoice != DialogResult.Yes)
+                {
+                    Lbl_Log.Text = "Optional backend installation was declined.";
+                    Lbl_Log.ForeColor = UiTheme.Primary;
+                    return;
+                }
+
+                importedModel = await _modelImporter.ImportAsync(
+                    dialog.FileName,
+                    progress,
+                    installOptionalBackend: true,
+                    importCancellation.Token);
+            }
+
+            RefreshModelList(importedModel.Name);
+            UpdateQueueState(0);
+            RefreshSelectedPreviewComparison();
+            Lbl_Log.Text = $"Imported model {importedModel.Name}.";
+            Lbl_Log.ForeColor = UiTheme.Success;
+        }
+        catch (OperationCanceledException)
+        {
+            Lbl_Log.Text = "Model import canceled.";
+            Lbl_Log.ForeColor = UiTheme.Primary;
+        }
+        catch (Exception exception) when (exception is ArgumentException or FileNotFoundException or InvalidDataException or InvalidOperationException or IOException or UnauthorizedAccessException)
+        {
+            ShowError("The model could not be imported.", exception.Message);
+            Lbl_Log.Text = "Model import failed.";
+            Lbl_Log.ForeColor = UiTheme.Danger;
+        }
+        finally
+        {
+            importCancellation.Dispose();
+            _modelImportCancellationTokenSource = null;
+            _isImportingModel = false;
+            Btn_ImportModel.Enabled = true;
+            SettingsFlow.Enabled = true;
+
+            if (_closeAfterCancellation)
+            {
+                Close();
+            }
         }
     }
 
@@ -204,7 +351,7 @@ public sealed partial class FormMain : Form
             : $"{imageCount} image{(imageCount == 1 ? string.Empty : "s")} in queue";
 
         Btn_Clear.Enabled = imageCount > 0 && !_isProcessing;
-        Btn_Upscale.Enabled = _isProcessing || imageCount > 0;
+        Btn_Upscale.Enabled = _isProcessing || (imageCount > 0 && Cmb_AI_Model.SelectedItem is UpscaleModel);
         Btn_RemoveSelected.Enabled = Lst_Images.SelectedIndex >= 0 && !_isProcessing;
 
         if (addedCount > 0)
@@ -358,10 +505,15 @@ public sealed partial class FormMain : Form
         try
         {
             Image preview = ImagePreviewLoader.Load(imagePath);
+            Image? afterPreview = TryLoadAfterPreview(imagePath);
             Image? previousPreview = _currentPreview;
+            Image? previousAfterPreview = _currentAfterPreview;
             _currentPreview = preview;
-            Pic_Preview.Image = preview;
+            _currentAfterPreview = afterPreview;
+            Pic_Preview.BeforeImage = preview;
+            Pic_Preview.AfterImage = afterPreview;
             previousPreview?.Dispose();
+            previousAfterPreview?.Dispose();
             Lbl_DropHint.Visible = false;
             Lbl_PreviewFileName.Text = Path.GetFileName(imagePath);
             ApplySelectedZoom();
@@ -374,6 +526,65 @@ public sealed partial class FormMain : Form
     }
 
     /// <summary>
+    /// Loads the current upscaled output for an input image when that output exists and can be previewed.
+    /// </summary>
+    /// <param name="inputPath">The selected source image path.</param>
+    /// <returns>A detached after image, or <see langword="null"/> when no previewable output exists.</returns>
+    private Bitmap? TryLoadAfterPreview(string inputPath)
+    {
+        string? outputPath = null;
+        if (Cmb_AI_Model.SelectedItem is UpscaleModel)
+        {
+            string candidatePath = OutputPathBuilder.Build(inputPath, CaptureOptions());
+            if (File.Exists(candidatePath))
+            {
+                outputPath = candidatePath;
+            }
+        }
+        else if (_upscaledPaths.TryGetValue(inputPath, out string? recordedPath) && File.Exists(recordedPath))
+        {
+            outputPath = recordedPath;
+        }
+
+        if (outputPath is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return ImagePreviewLoader.Load(outputPath);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Reloads the selected queue item so the comparison follows model and output setting changes.
+    /// </summary>
+    private void RefreshSelectedPreviewComparison()
+    {
+        if (Lst_Images.SelectedItem is string)
+        {
+            Lst_Images_SelectedIndexChanged(Lst_Images, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// Refreshes the comparison when a setting changes the expected output path.
+    /// </summary>
+    /// <param name="sender">The control that raised the event.</param>
+    /// <param name="e">The event data.</param>
+    private void PreviewSettings_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        RefreshSelectedPreviewComparison();
+        Btn_Upscale.Enabled = _isProcessing ||
+            (_imagePaths.Count > 0 && Cmb_AI_Model.SelectedItem is UpscaleModel);
+    }
+
+    /// <summary>
     /// Clears the queue, preview, status, and progress controls.
     /// </summary>
     /// <param name="sender">The control that raised the event.</param>
@@ -381,6 +592,7 @@ public sealed partial class FormMain : Form
     private void Btn_Clear_Click(object? sender, EventArgs e)
     {
         _imagePaths.Clear();
+        _upscaledPaths.Clear();
         Lst_Images.Items.Clear();
         DisposeQueueThumbnails();
         ClearPreview();
@@ -406,6 +618,7 @@ public sealed partial class FormMain : Form
 
         string imagePath = (string)Lst_Images.Items[selectedIndex];
         _imagePaths.Remove(imagePath);
+        _upscaledPaths.Remove(imagePath);
         Lst_Images.Items.RemoveAt(selectedIndex);
 
         if (_queueThumbnails.Remove(imagePath, out Image? thumbnail))
@@ -451,18 +664,29 @@ public sealed partial class FormMain : Form
             return;
         }
 
-        if (!_upscaler.IsAvailable)
+        if (Cmb_AI_Model.SelectedItem is not UpscaleModel)
         {
             MessageBox.Show(
                 this,
-                "Real-ESRGAN is not installed next to Sharp Forge. Run Build\\Setup.bat during development or include the 'realesrgan' directory when publishing.",
-                "Real-ESRGAN not found",
+                "Import or install a usable AI model before starting.",
+                "No AI model",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            return;
+        }
+
+        UpscaleOptions options = CaptureOptions();
+        if (!_upscaler.IsAvailable(options.Backend))
+        {
+            MessageBox.Show(
+                this,
+                _upscaler.GetUnavailableMessage(options.Backend),
+                "Upscaling backend not found",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
             return;
         }
 
-        UpscaleOptions options = CaptureOptions();
         string[] inputPaths = _imagePaths.ToArray();
         _cancellationTokenSource = new CancellationTokenSource();
         SetProcessingState(isProcessing: true, inputPaths.Length);
@@ -502,8 +726,14 @@ public sealed partial class FormMain : Form
     /// <returns>Immutable settings for the next batch.</returns>
     private UpscaleOptions CaptureOptions()
     {
+        UpscaleModel model = Cmb_AI_Model.SelectedItem as UpscaleModel
+            ?? throw new InvalidOperationException("No usable AI model is selected.");
+
         return new UpscaleOptions(
-            Cmb_AI_Model.SelectedItem?.ToString() ?? "realesrgan-x4plus",
+            model.Name,
+            model.DirectoryPath,
+            model.ModelPath,
+            model.Backend,
             Cmb_FileExtension.SelectedItem?.ToString() ?? "png",
             GetSelectedInt(Cmb_TileSize, 128),
             GetSelectedInt(Cmb_GPU_Id, 0),
@@ -555,6 +785,14 @@ public sealed partial class FormMain : Form
     /// <param name="wasCanceled">Whether cancellation was requested by the user.</param>
     private void DisplayBatchResult(UpscaleBatchResult result, int totalCount, bool wasCanceled)
     {
+        foreach (UpscaleResult item in result.Results.Where(item =>
+                     (item.Status is UpscaleStatus.Completed or UpscaleStatus.Skipped) && File.Exists(item.OutputPath)))
+        {
+            _upscaledPaths[item.InputPath] = item.OutputPath;
+        }
+
+        RefreshSelectedPreviewComparison();
+
         if (wasCanceled)
         {
             Lbl_Log.Text = $"Canceled. {result.Results.Count}/{totalCount} images reached a final state.";
@@ -591,12 +829,13 @@ public sealed partial class FormMain : Form
         Btn_AddImages.Enabled = !isProcessing;
         Btn_Clear.Enabled = !isProcessing && _imagePaths.Count > 0;
         Btn_RemoveSelected.Enabled = !isProcessing && Lst_Images.SelectedIndex >= 0;
+        Btn_ImportModel.Enabled = !isProcessing;
         SettingsFlow.Enabled = !isProcessing;
         AllowDrop = !isProcessing;
         PreviewPanel.AllowDrop = !isProcessing;
         Pic_Preview.AllowDrop = !isProcessing;
 
-        Btn_Upscale.Enabled = isProcessing || _imagePaths.Count > 0;
+        Btn_Upscale.Enabled = isProcessing || (_imagePaths.Count > 0 && Cmb_AI_Model.SelectedItem is UpscaleModel);
         Btn_Upscale.Text = isProcessing ? "Cancel Upscaling" : "Start Upscaling";
         Btn_Upscale.Image = isProcessing ? _cancelUpscaleIcon : _startUpscaleIcon;
         Btn_Upscale.BackColor = isProcessing
@@ -642,11 +881,13 @@ public sealed partial class FormMain : Form
     /// </summary>
     private void ClearPreview()
     {
-        Pic_Preview.Image = null;
+        Pic_Preview.BeforeImage = null;
+        Pic_Preview.AfterImage = null;
         _currentPreview?.Dispose();
         _currentPreview = null;
+        _currentAfterPreview?.Dispose();
+        _currentAfterPreview = null;
         Pic_Preview.Dock = DockStyle.Fill;
-        Pic_Preview.SizeMode = PictureBoxSizeMode.Zoom;
         Lbl_DropHint.Visible = true;
         Lbl_PreviewFileName.Text = "No image selected";
         Cmb_Zoom.SelectedIndex = 0;
@@ -666,7 +907,6 @@ public sealed partial class FormMain : Form
         {
             PreviewCanvas.AutoScroll = false;
             Pic_Preview.Dock = DockStyle.Fill;
-            Pic_Preview.SizeMode = PictureBoxSizeMode.Zoom;
             return;
         }
 
@@ -678,7 +918,6 @@ public sealed partial class FormMain : Form
         PreviewCanvas.AutoScroll = true;
         PreviewCanvas.AutoScrollPosition = Point.Empty;
         Pic_Preview.Dock = DockStyle.None;
-        Pic_Preview.SizeMode = PictureBoxSizeMode.Zoom;
         Pic_Preview.Size = new Size(
             Math.Max(1, _currentPreview.Width * zoomPercent / 100),
             Math.Max(1, _currentPreview.Height * zoomPercent / 100));
@@ -743,6 +982,9 @@ public sealed partial class FormMain : Form
         }
 
         using Bitmap fullscreenImage = new(_currentPreview);
+        using Bitmap? fullscreenAfterImage = _currentAfterPreview is null
+            ? null
+            : new Bitmap(_currentAfterPreview);
         using Form fullscreenForm = new()
         {
             BackColor = UiTheme.Window,
@@ -751,15 +993,13 @@ public sealed partial class FormMain : Form
             StartPosition = FormStartPosition.CenterParent,
             WindowState = FormWindowState.Maximized
         };
-        PictureBox fullscreenPreview = new()
+        BeforeAfterViewer fullscreenPreview = new()
         {
             BackColor = UiTheme.Window,
-            Cursor = Cursors.Hand,
             Dock = DockStyle.Fill,
-            Image = fullscreenImage,
-            SizeMode = PictureBoxSizeMode.Zoom
+            BeforeImage = fullscreenImage,
+            AfterImage = fullscreenAfterImage
         };
-        fullscreenPreview.Click += (_, _) => fullscreenForm.Close();
         fullscreenForm.KeyDown += (_, keyEvent) =>
         {
             if (keyEvent.KeyCode == Keys.Escape)
@@ -859,6 +1099,16 @@ public sealed partial class FormMain : Form
     /// <param name="e">The form-closing event data.</param>
     private void FormMain_FormClosing(object? sender, FormClosingEventArgs e)
     {
+        if (_isImportingModel)
+        {
+            e.Cancel = true;
+            _closeAfterCancellation = true;
+            _modelImportCancellationTokenSource?.Cancel();
+            Lbl_Log.Text = "Canceling model import...";
+            Lbl_Log.ForeColor = UiTheme.Danger;
+            return;
+        }
+
         if (!_isProcessing)
         {
             return;

@@ -4,6 +4,7 @@
 bin/
 obj/
 SharpForge/Runtime/realesrgan/
+SharpForge/Runtime/texconv/
 
 # Files
 *.user
